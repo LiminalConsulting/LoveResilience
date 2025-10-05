@@ -1,5 +1,5 @@
-import { useTexture } from '@react-three/drei'
-import { Suspense } from 'react'
+import { useLoader } from '@react-three/fiber'
+import { Suspense, useState, useEffect } from 'react'
 import * as THREE from 'three'
 
 interface SafeTextureProps {
@@ -9,19 +9,29 @@ interface SafeTextureProps {
 }
 
 const TextureComponent = ({ url, children }: { url: string; children: (texture: THREE.Texture) => React.ReactNode }) => {
-  try {
-    const texture = useTexture(url)
-    return <>{children(texture)}</>
-  } catch (error) {
-    console.warn(`Failed to load texture: ${url}`, error)
-    // Return a simple colored plane as fallback
+  const [error, setError] = useState<Error | null>(null)
+
+  // Use THREE.TextureLoader with error handling
+  const texture = useLoader(
+    THREE.TextureLoader,
+    url,
+    undefined,
+    (err) => {
+      console.error(`Failed to load texture: ${url}`, err)
+      setError(err instanceof Error ? err : new Error(String(err)))
+    }
+  )
+
+  if (error) {
     return (
       <mesh>
         <planeGeometry args={[1.2, 1.8]} />
-        <meshStandardMaterial color="#f5f3f0" />
+        <meshStandardMaterial color="#cccccc" />
       </mesh>
     )
   }
+
+  return <>{children(texture)}</>
 }
 
 export const SafeTexture = ({ url, children, fallback }: SafeTextureProps) => {

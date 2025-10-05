@@ -23,8 +23,9 @@ export const loadCardData = async (): Promise<CardData> => {
   
   for (const fileName of cardManifest) {
     const { id, name, theme, category } = parseFileName(fileName)
-    const imagePath = `/LoveResilience/CardSet/${fileName}`
-    
+    // Use import.meta.env.BASE_URL to handle both dev and production paths
+    const imagePath = `${import.meta.env.BASE_URL}CardSet/${fileName}`
+
     cards.push({
       id,
       name,
@@ -44,11 +45,11 @@ export const loadCardData = async (): Promise<CardData> => {
       ]
     })
   }
-  
+
   cards.sort((a, b) => parseInt(a.id) - parseInt(b.id))
-  
-  const backside = '/LoveResilience/Backside.jpg'
-  const cover = '/LoveResilience/Cover.png'
+
+  const backside = `${import.meta.env.BASE_URL}Backside.jpg`
+  const cover = `${import.meta.env.BASE_URL}Cover.png`
   
   return { cards, backside, cover }
 }
