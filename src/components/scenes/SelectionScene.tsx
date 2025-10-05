@@ -79,7 +79,7 @@ const Card3D = ({ position, backside, isHovered, onClick, onHover, mousePos }: C
 }
 
 const FloatingCards = () => {
-  const { shuffledCards, cardData, setSelectedCard, setState } = useAppStore()
+  const { shuffledCards, cardData, setSelectedCard, startTransition } = useAppStore()
   const [hoveredCard, setHoveredCard] = useState<string | null>(null)
   const [mousePos, setMousePos] = useState(new THREE.Vector2(0, 0))
   const { camera, size, raycaster } = useThree()
@@ -117,7 +117,7 @@ const FloatingCards = () => {
 
   const handleCardClick = (card: Card) => {
     setSelectedCard(card)
-    setState('viewing')
+    startTransition('viewing')
   }
 
   return (

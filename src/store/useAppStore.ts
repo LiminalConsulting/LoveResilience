@@ -71,21 +71,19 @@ export const useAppStore = create<AppStore>((set, get) => ({
     const { currentState } = get()
     set({
       previousState: currentState,
+      currentState: toState,
       isTransitioning: true,
       transitionProgress: 0
     })
-    // Transition will be driven by SceneOrchestrator
   },
 
   setTransitionProgress: (progress) => set({ transitionProgress: progress }),
 
   completeTransition: () => {
-    const { previousState } = get()
     set({
       previousState: null,
       isTransitioning: false,
-      transitionProgress: 1,
-      currentState: previousState as AppState // Complete the transition
+      transitionProgress: 1
     })
   },
   
