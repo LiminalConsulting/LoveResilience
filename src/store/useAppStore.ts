@@ -4,6 +4,9 @@ import { Card, CardData, AppState } from '../types/Card'
 interface AppStore {
   // State
   currentState: AppState
+  previousState: AppState | null
+  isTransitioning: boolean
+  transitionProgress: number
   cardData: CardData | null
   selectedCard: Card | null
   shuffledCards: Card[]
@@ -13,6 +16,9 @@ interface AppStore {
 
   // Actions
   setState: (state: AppState) => void
+  startTransition: (toState: AppState) => void
+  setTransitionProgress: (progress: number) => void
+  completeTransition: () => void
   setCardData: (data: CardData) => void
   setSelectedCard: (card: Card | null) => void
   shuffleCards: () => void
@@ -49,6 +55,9 @@ const getDailyCardId = (): string => {
 
 export const useAppStore = create<AppStore>((set, get) => ({
   currentState: 'welcome',
+  previousState: null,
+  isTransitioning: false,
+  transitionProgress: 0,
   cardData: null,
   selectedCard: null,
   shuffledCards: [],
@@ -57,6 +66,28 @@ export const useAppStore = create<AppStore>((set, get) => ({
   centeringPhase: 'check',
 
   setState: (state) => set({ currentState: state }),
+
+  startTransition: (toState) => {
+    const { currentState } = get()
+    set({
+      previousState: currentState,
+      isTransitioning: true,
+      transitionProgress: 0
+    })
+    // Transition will be driven by SceneOrchestrator
+  },
+
+  setTransitionProgress: (progress) => set({ transitionProgress: progress }),
+
+  completeTransition: () => {
+    const { previousState } = get()
+    set({
+      previousState: null,
+      isTransitioning: false,
+      transitionProgress: 1,
+      currentState: previousState as AppState // Complete the transition
+    })
+  },
   
   setCardData: (data) => {
     set({ cardData: data })
