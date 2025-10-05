@@ -2,10 +2,17 @@ import { Canvas } from '@react-three/fiber'
 import { Suspense } from 'react'
 import { useAppStore } from '../store/useAppStore'
 import { WelcomeScene } from './scenes/WelcomeScene'
+import { CenteringScene } from './scenes/CenteringScene'
+import { SelectionScene } from './scenes/SelectionScene'
+import { DailyCardScene } from './scenes/DailyCardScene'
+import { ViewingScene } from './scenes/ViewingScene'
 
 // Temporary scene router - will be replaced with SceneOrchestrator
 const SceneRouter = () => {
   const currentState = useAppStore(state => state.currentState)
+  const centeringPhase = useAppStore(state => state.centeringPhase)
+  const centeringProgress = useAppStore(state => state.centeringProgress)
+  const selectedCard = useAppStore(state => state.selectedCard)
 
   return (
     <>
@@ -15,13 +22,15 @@ const SceneRouter = () => {
 
       {/* State-specific scenes */}
       {currentState === 'welcome' && <WelcomeScene />}
-
-      {/* Placeholder for other states */}
-      {currentState !== 'welcome' && (
-        <mesh>
-          <boxGeometry args={[1, 1, 1]} />
-          <meshStandardMaterial color="#d4af37" />
-        </mesh>
+      {currentState === 'centering' && (
+        <CenteringScene phase={centeringPhase} progress={centeringProgress} />
+      )}
+      {currentState === 'selection' && <SelectionScene />}
+      {currentState === 'daily' && selectedCard && (
+        <DailyCardScene imagePath={selectedCard.imagePath} theme={selectedCard.theme} />
+      )}
+      {currentState === 'viewing' && selectedCard && (
+        <ViewingScene imagePath={selectedCard.imagePath} />
       )}
     </>
   )

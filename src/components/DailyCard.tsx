@@ -1,77 +1,7 @@
 import { useEffect } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
-import { Text, Float } from '@react-three/drei'
-import { useSpring, a } from '@react-spring/three'
 import { useAppStore } from '../store/useAppStore'
-import { SafeTexture } from './TextureLoader'
-import * as THREE from 'three'
-import { useRef } from 'react'
 
-const DailyCard3D = ({ imagePath }: { imagePath: string }) => {
-  const meshRef = useRef<THREE.Mesh>(null)
-  
-  const { scale, rotationY } = useSpring({
-    from: { scale: 0, rotationY: Math.PI },
-    to: { scale: 1, rotationY: 0 },
-    config: { tension: 200, friction: 60 }
-  })
-  
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.1
-    }
-  })
-  
-  return (
-    <SafeTexture url={imagePath}>
-      {(texture) => (
-        <Float speed={1.5} rotationIntensity={0.1} floatIntensity={0.3}>
-          <a.mesh ref={meshRef} scale={scale} rotation-y={rotationY}>
-            <planeGeometry args={[2.5, 3.8]} />
-            <meshStandardMaterial
-              map={texture}
-              transparent
-              side={THREE.DoubleSide}
-            />
-          </a.mesh>
-        </Float>
-      )}
-    </SafeTexture>
-  )
-}
-
-const SunRays = () => {
-  const groupRef = useRef<THREE.Group>(null)
-  
-  useFrame((state) => {
-    if (groupRef.current) {
-      groupRef.current.rotation.z = state.clock.elapsedTime * 0.1
-    }
-  })
-  
-  return (
-    <group ref={groupRef} position={[0, 0, -3]}>
-      {Array.from({ length: 12 }, (_, i) => (
-        <mesh
-          key={i}
-          position={[
-            Math.cos((i / 12) * Math.PI * 2) * 4,
-            Math.sin((i / 12) * Math.PI * 2) * 4,
-            0
-          ]}
-          rotation={[0, 0, (i / 12) * Math.PI * 2]}
-        >
-          <planeGeometry args={[0.1, 2]} />
-          <meshBasicMaterial
-            color="#d4af37"
-            transparent
-            opacity={0.2}
-          />
-        </mesh>
-      ))}
-    </group>
-  )
-}
+// 3D scene moved to DailyCardScene in UnifiedCanvas
 
 export const DailyCard = () => {
   const { getDailyCard, selectedCard, setState } = useAppStore()
@@ -103,25 +33,7 @@ export const DailyCard = () => {
       </div>
       
       <div className="daily-card-display">
-        <Canvas camera={{ position: [0, 0, 6], fov: 60 }}>
-          <ambientLight intensity={0.6} />
-          <directionalLight position={[5, 5, 5]} intensity={0.8} />
-          <pointLight position={[-3, 3, 3]} intensity={0.4} color="#d4af37" />
-          
-          <SunRays />
-          <DailyCard3D imagePath={selectedCard.imagePath} />
-          
-          <Text
-            position={[0, -3, 0]}
-            fontSize={0.8}
-            color="#5a5a5a"
-            anchorX="center"
-            anchorY="middle"
-            fontWeight="300"
-          >
-            {selectedCard.theme}
-          </Text>
-        </Canvas>
+        {/* 3D scene rendered by UnifiedCanvas */}
       </div>
       
       <div className="daily-content">
@@ -161,14 +73,17 @@ export const DailyCard = () => {
       
       <style>{`
         .daily-container {
+          position: fixed;
+          top: 0;
+          left: 0;
           width: 100vw;
           height: 100vh;
-          background: linear-gradient(135deg, #f5f3f0 0%, #faf8f5 50%, #e8e4e0 100%);
           display: flex;
           flex-direction: column;
           align-items: center;
           padding: 2rem;
           overflow-y: auto;
+          pointer-events: auto;
         }
         
         .daily-loading {

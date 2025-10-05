@@ -1,43 +1,7 @@
-import { useRef, useState } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
-import { Float } from '@react-three/drei'
-import { useSpring, a } from '@react-spring/three'
+import { useState } from 'react'
 import { useAppStore } from '../store/useAppStore'
-import { SafeTexture } from './TextureLoader'
-import * as THREE from 'three'
 
-const Card3DDisplay = ({ imagePath }: { imagePath: string }) => {
-  const meshRef = useRef<THREE.Mesh>(null)
-  
-  const { rotationY } = useSpring({
-    from: { rotationY: Math.PI },
-    to: { rotationY: 0 },
-    config: { tension: 200, friction: 50 }
-  })
-  
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.1
-    }
-  })
-  
-  return (
-    <SafeTexture url={imagePath}>
-      {(texture) => (
-        <Float speed={1} rotationIntensity={0.1} floatIntensity={0.2}>
-          <a.mesh ref={meshRef} rotation-y={rotationY}>
-            <planeGeometry args={[3, 4.5]} />
-            <meshStandardMaterial
-              map={texture}
-              transparent
-              side={THREE.DoubleSide}
-            />
-          </a.mesh>
-        </Float>
-      )}
-    </SafeTexture>
-  )
-}
+// 3D scene moved to ViewingScene in UnifiedCanvas
 
 const CardContent = ({ 
   theme, 
@@ -138,13 +102,7 @@ export const CardViewing = () => {
   return (
     <div className="viewing-container">
       <div className="card-display">
-        <Canvas camera={{ position: [0, 0, 6], fov: 60 }}>
-          <ambientLight intensity={0.6} />
-          <directionalLight position={[5, 5, 5]} intensity={0.8} />
-          <pointLight position={[-3, 3, 3]} intensity={0.4} color="#d4af37" />
-          
-          <Card3DDisplay imagePath={selectedCard.imagePath} />
-        </Canvas>
+        {/* 3D scene rendered by UnifiedCanvas */}
       </div>
       
       <div className="card-info">
@@ -182,10 +140,13 @@ export const CardViewing = () => {
       
       <style>{`
         .viewing-container {
+          position: fixed;
+          top: 0;
+          left: 0;
           display: flex;
           width: 100vw;
           height: 100vh;
-          background: linear-gradient(135deg, #f5f3f0 0%, #e8e4e0 100%);
+          pointer-events: auto;
         }
         
         .card-display {

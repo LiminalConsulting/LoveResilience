@@ -1,65 +1,17 @@
-import { useRef, useEffect, useState } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
-import { Text } from '@react-three/drei'
+import { useEffect, useState } from 'react'
 import { useAppStore } from '../store/useAppStore'
-import * as THREE from 'three'
 
-const BreathingOrb = ({ isActive }: { isActive: boolean }) => {
-  const meshRef = useRef<THREE.Mesh>(null)
-  const materialRef = useRef<THREE.MeshStandardMaterial>(null)
-  
-  useFrame((state) => {
-    if (meshRef.current && materialRef.current && isActive) {
-      const breathCycle = Math.sin(state.clock.elapsedTime * 0.3) * 0.5 + 0.5
-      const scale = 0.5 + breathCycle * 0.3
-      
-      meshRef.current.scale.setScalar(scale)
-      materialRef.current.opacity = 0.3 + breathCycle * 0.4
-    }
-  })
-  
-  return (
-    <mesh ref={meshRef} position={[0, 0, -2]}>
-      <sphereGeometry args={[1, 32, 32]} />
-      <meshStandardMaterial
-        ref={materialRef}
-        color="#d4af37"
-        transparent
-        opacity={0.3}
-        roughness={0.1}
-        metalness={0.5}
-      />
-    </mesh>
-  )
-}
-
-const CenteringText = ({ phase }: { phase: string; progress: number }) => {
-  const texts = {
-    check: "How are you feeling right now?",
-    breathe: "Follow the gentle rhythm with your breath",
-    intention: "Set your intention for this moment",
-    ready: "You are centered and ready"
-  }
-  
-  return (
-    <Text
-      position={[0, -1.5, 0]}
-      fontSize={0.4}
-      color="#5a5a5a"
-      anchorX="center"
-      anchorY="middle"
-      maxWidth={8}
-      textAlign="center"
-    >
-      {texts[phase as keyof typeof texts]}
-    </Text>
-  )
-}
+// 3D scene moved to CenteringScene in UnifiedCanvas
 
 export const Centering = () => {
-  const { setState, setCenteringProgress } = useAppStore()
+  const { setState, setCenteringProgress, setCenteringPhase } = useAppStore()
   const [phase, setPhase] = useState<'check' | 'breathe' | 'intention' | 'ready'>('check')
   const [progress] = useState(0)
+
+  // Sync phase with store so UnifiedCanvas can access it
+  useEffect(() => {
+    setCenteringPhase(phase)
+  }, [phase, setCenteringPhase])
   
   const startBreathing = () => {
     setPhase('breathe')
@@ -93,13 +45,6 @@ export const Centering = () => {
   
   return (
     <div className="centering-container">
-      <Canvas camera={{ position: [0, 0, 5], fov: 60 }}>
-        <ambientLight intensity={0.4} />
-        <pointLight position={[10, 10, 10]} intensity={0.6} />
-        
-        <BreathingOrb isActive={phase === 'breathe'} />
-        <CenteringText phase={phase} progress={progress} />
-      </Canvas>
       
       <div className="centering-actions">
         {phase === 'check' && (
@@ -153,10 +98,12 @@ export const Centering = () => {
       
       <style>{`
         .centering-container {
-          position: relative;
+          position: fixed;
+          top: 0;
+          left: 0;
           width: 100vw;
           height: 100vh;
-          background: linear-gradient(135deg, #f5f3f0 0%, #e8e4e0 100%);
+          pointer-events: none;
         }
         
         .centering-actions {
@@ -168,6 +115,7 @@ export const Centering = () => {
           flex-direction: column;
           align-items: center;
           gap: 1rem;
+          pointer-events: auto;
         }
         
         .check-options {
