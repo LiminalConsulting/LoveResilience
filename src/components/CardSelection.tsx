@@ -35,8 +35,8 @@ const Card3D = ({ position, backside, isHovered, onClick, onHover, mousePos }: C
       const dy = mousePos.y - cardWorldPos.y
 
       // Very subtle tilt (max 0.1 radians = ~5.7 degrees)
-      const tiltX = THREE.MathUtils.clamp(dy * 0.05, -0.1, 0.1)
-      const tiltY = THREE.MathUtils.clamp(-dx * 0.05, -0.1, 0.1)
+      const tiltX = THREE.MathUtils.clamp(-dy * 0.05, -0.1, 0.1)
+      const tiltY = THREE.MathUtils.clamp(dx * 0.05, -0.1, 0.1)
 
       targetRotation.current.set(tiltX, tiltY, 0)
 
