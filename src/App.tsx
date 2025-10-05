@@ -1,6 +1,7 @@
 import { useEffect, Suspense } from 'react'
 import { useAppStore } from './store/useAppStore'
 import { loadCardData } from './data/cardLoader'
+import { UnifiedCanvas } from './components/UnifiedCanvas'
 import { Welcome } from './components/Welcome'
 import { Centering } from './components/Centering'
 import { CardSelection } from './components/CardSelection'
@@ -76,6 +77,10 @@ function App() {
   
   return (
     <div className="app">
+      {/* Unified Canvas - persistent across all states */}
+      <UnifiedCanvas />
+
+      {/* UI Overlays - rendered on top of canvas */}
       <Suspense fallback={<LoadingScreen />}>
         {currentState === 'welcome' && <Welcome />}
         {currentState === 'centering' && <Centering />}

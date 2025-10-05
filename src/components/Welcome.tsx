@@ -1,75 +1,20 @@
-import { useRef, useEffect } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
-import { Text, Float } from '@react-three/drei'
+import { useEffect } from 'react'
 import { useAppStore } from '../store/useAppStore'
-import * as THREE from 'three'
 
-const FloatingOrb = () => {
-  const meshRef = useRef<THREE.Mesh>(null)
-  
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.5) * 0.1
-      meshRef.current.rotation.y = state.clock.elapsedTime * 0.2
-    }
-  })
-  
-  return (
-    <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
-      <mesh ref={meshRef} position={[0, 0, -2]}>
-        <sphereGeometry args={[0.8, 32, 32]} />
-        <meshStandardMaterial
-          color="#d4af37"
-          transparent
-          opacity={0.3}
-          roughness={0.1}
-          metalness={0.8}
-        />
-      </mesh>
-    </Float>
-  )
-}
+// 3D elements moved to UnifiedCanvas/scenes
+// This component now only handles UI overlay
 
 export const Welcome = () => {
   const setState = useAppStore(state => state.setState)
-  
+
   useEffect(() => {
     if (!localStorage.getItem('loveResilience_userId')) {
       localStorage.setItem('loveResilience_userId', Math.random().toString(36).substring(7))
     }
   }, [])
-  
+
   return (
     <div className="welcome-container">
-      <Canvas camera={{ position: [0, 0, 5], fov: 60 }}>
-        <ambientLight intensity={0.6} />
-        <pointLight position={[10, 10, 10]} intensity={0.8} />
-        
-        <FloatingOrb />
-        
-        <Text
-          position={[0, 2, 0]}
-          fontSize={0.8}
-          color="#5a5a5a"
-          anchorX="center"
-          anchorY="middle"
-          fontWeight="300"
-        >
-          Love Resilience
-        </Text>
-        
-        <Text
-          position={[0, 1, 0]}
-          fontSize={0.3}
-          color="#8a8a8a"
-          anchorX="center"
-          anchorY="middle"
-          maxWidth={6}
-          textAlign="center"
-        >
-          A digital sanctuary for practical spirituality
-        </Text>
-      </Canvas>
       
       <div className="welcome-actions">
         <button 
@@ -93,14 +38,16 @@ export const Welcome = () => {
       
       <style>{`
         .welcome-container {
-          position: relative;
+          position: fixed;
+          top: 0;
+          left: 0;
           width: 100vw;
           height: 100vh;
           display: flex;
           flex-direction: column;
           justify-content: center;
           align-items: center;
-          background: linear-gradient(135deg, #f5f3f0 0%, #e8e4e0 100%);
+          pointer-events: none;
         }
         
         .welcome-actions {
@@ -110,6 +57,7 @@ export const Welcome = () => {
           flex-direction: column;
           align-items: center;
           gap: 1rem;
+          pointer-events: auto;
         }
         
         .action-button {
