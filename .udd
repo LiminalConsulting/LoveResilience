@@ -3,7 +3,11 @@
   "title": "LoveResilience",
   "type": "dream",
   "dreamTalk": "",
-  "liminalWebRelationships": [],
+  "liminalWebRelationships": [
+    "01b58d67-a03c-4d8c-a07f-1003cf7f46fd",
+    "7fc26d4f-6a43-42d5-9a35-b8fcc62e7560",
+    "1278e755-916c-4274-aea4-1813e9bf4669"
+  ],
   "submodules": [],
   "supermodules": []
 }

@@ -1,0 +1,3 @@
+[submodule "mcp-servers/playwright"]
+	path = mcp-servers/playwright
+	url = https://github.com/executeautomation/mcp-playwright.git

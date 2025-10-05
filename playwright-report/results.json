@@ -1,0 +1,428 @@
+{
+  "config": {
+    "configFile": "/Users/davidrug/DemoVault/LoveResilience/playwright.config.ts",
+    "rootDir": "/Users/davidrug/DemoVault/LoveResilience/e2e",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {},
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "html",
+        {
+          "outputFolder": "playwright-report"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "playwright-report/results.json"
+        }
+      ],
+      [
+        "list",
+        null
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "/Users/davidrug/DemoVault/LoveResilience/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/davidrug/DemoVault/LoveResilience/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.55.1",
+    "workers": 5,
+    "webServer": {
+      "command": "npm run dev",
+      "url": "http://localhost:5173",
+      "reuseExistingServer": true,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "card-deck.spec.ts",
+      "file": "card-deck.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Card Deck Loading",
+          "file": "card-deck.spec.ts",
+          "line": 8,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should load the application successfully",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "8283dbb4ccc06006df2b-f4c6ef27b2844ff965a0",
+              "file": "card-deck.spec.ts",
+              "line": 9,
+              "column": 3
+            },
+            {
+              "title": "should display card deck in 3D space",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "8283dbb4ccc06006df2b-faefef20d48ed7cddbd3",
+              "file": "card-deck.spec.ts",
+              "line": 20,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Card Interaction",
+          "file": "card-deck.spec.ts",
+          "line": 31,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should allow user to draw a card",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "8283dbb4ccc06006df2b-e8de79f02484e74617d4",
+              "file": "card-deck.spec.ts",
+              "line": 32,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Visual Appearance",
+          "file": "card-deck.spec.ts",
+          "line": 51,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should match design aesthetic",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "8283dbb4ccc06006df2b-313650cdf0d737bd2ec6",
+              "file": "card-deck.spec.ts",
+              "line": 52,
+              "column": 3
+            },
+            {
+              "title": "should be responsive on mobile viewport",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "8283dbb4ccc06006df2b-68c2b4f18bc7ebc065c2",
+              "file": "card-deck.spec.ts",
+              "line": 64,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Performance",
+          "file": "card-deck.spec.ts",
+          "line": 76,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should load within acceptable time",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "8283dbb4ccc06006df2b-88874b568341634cb20e",
+              "file": "card-deck.spec.ts",
+              "line": 77,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "card-drawing.spec.ts",
+      "file": "card-drawing.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Card Drawing Flow",
+          "file": "card-drawing.spec.ts",
+          "line": 8,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should allow user to draw a card",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "85bd47f96d4dc4e6750d-1997931e4d2391480d3f",
+              "file": "card-drawing.spec.ts",
+              "line": 9,
+              "column": 3
+            },
+            {
+              "title": "should show card details after selection",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "85bd47f96d4dc4e6750d-6790f3d30c7df09650f7",
+              "file": "card-drawing.spec.ts",
+              "line": 27,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Intuitive Card Selection",
+          "file": "card-drawing.spec.ts",
+          "line": 44,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should display shuffled deck for intuitive selection",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "85bd47f96d4dc4e6750d-353d03175f364ec2c95d",
+              "file": "card-drawing.spec.ts",
+              "line": 45,
+              "column": 3
+            },
+            {
+              "title": "should respond to mouse hover over cards",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "85bd47f96d4dc4e6750d-d3a89bde38d17756a178",
+              "file": "card-drawing.spec.ts",
+              "line": 59,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "state-preparation.spec.ts",
+      "file": "state-preparation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "State Preparation Flow",
+          "file": "state-preparation.spec.ts",
+          "line": 8,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should show greeting/entry screen",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "907db7b2af09ea60d112-924b8af22a9d2c09203e",
+              "file": "state-preparation.spec.ts",
+              "line": 9,
+              "column": 3
+            },
+            {
+              "title": "should transition to main deck after preparation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "907db7b2af09ea60d112-57f8e77b8422dc6d1988",
+              "file": "state-preparation.spec.ts",
+              "line": 20,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Centering Experience",
+          "file": "state-preparation.spec.ts",
+          "line": 35,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should provide space for user to center",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "907db7b2af09ea60d112-438bffbd6d20f1542026",
+              "file": "state-preparation.spec.ts",
+              "line": 36,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2025-10-05T10:04:19.899Z",
+    "duration": 157.45899999999995,
+    "expected": 0,
+    "skipped": 13,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}
