@@ -103,7 +103,13 @@ npm run test:e2e:debug
 9. **Card Selection Transition** - When clicking card, smooth animation to viewing mode (others fade/fly out)
 10. **Wing Element from "Let the Light In" card** - Add to Welcome screen as decorative element
 11. **Card Content from PDF** - Parse PDF and create individual text files per card (meaning, questions, actions)
-12. **Editable Document Generation** - Create document with card images + text for Tanja's reference
+12. **Client Document Creation** - ⚠️ PARTIALLY COMPLETE
+    - ✅ Created initial markdown structure with first ~10 cards as example
+    - ❌ Need to complete all 70 cards in document
+    - ❌ Need to convert to Pages-compatible format (RTF or DOCX)
+    - ❌ Need to embed images directly in document (self-contained, no external dependencies)
+    - 📄 See: `LoveResilience_CardDeck_Complete.md` and `CLIENT_DOCUMENT_SPECIFICATIONS.md`
+    - **Goal:** Single editable document with all card text + embedded images that client can open in Pages without needing image files in same directory
 13. **Text overlapping with cards in selection screen** - Layout needs adjustment
 
 **Technical Debt:**
