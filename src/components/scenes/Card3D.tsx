@@ -27,9 +27,10 @@ export const Card3D = ({
   hoverLift = false
 }: Card3DProps) => {
   const meshRef = useRef<THREE.Mesh>(null)
+  const groupRef = useRef<THREE.Group>(null)
   const [isHovered, setIsHovered] = useState(false)
   const { pointer } = useThree()
-  const targetRotation = useRef(new THREE.Euler(0, 0, 0))
+  const targetRotation = useRef({ x: 0, y: 0 })
 
   // Flip animation (card reveal)
   const { rotationY } = useSpring({
@@ -54,35 +55,6 @@ export const Card3D = ({
   // Gentle floating/pulse animation + interactive tilt
   useFrame((state) => {
     if (meshRef.current) {
-      // Interactive tilt toward cursor
-      if (interactive && isHovered) {
-        const cardWorldPos = new THREE.Vector3(...position)
-        const dx = pointer.x * 5 - cardWorldPos.x
-        const dy = pointer.y * 3 - cardWorldPos.y
-
-        // Very subtle tilt (max 0.1 radians = ~5.7 degrees)
-        const tiltX = THREE.MathUtils.clamp(-dy * 0.05, -0.1, 0.1)
-        const tiltY = THREE.MathUtils.clamp(dx * 0.05, -0.1, 0.1)
-
-        targetRotation.current.set(tiltX, tiltY, 0)
-
-        // Smooth interpolation
-        meshRef.current.rotation.x = THREE.MathUtils.lerp(
-          meshRef.current.rotation.x,
-          targetRotation.current.x,
-          0.1
-        )
-        meshRef.current.rotation.y = THREE.MathUtils.lerp(
-          meshRef.current.rotation.y,
-          targetRotation.current.y,
-          0.1
-        )
-      } else {
-        // Return to neutral rotation
-        meshRef.current.rotation.x = THREE.MathUtils.lerp(meshRef.current.rotation.x, 0, 0.1)
-        meshRef.current.rotation.y = THREE.MathUtils.lerp(meshRef.current.rotation.y, 0, 0.1)
-      }
-
       // Floating/pulse animation
       if (pulseAnimation) {
         // Gentle breathing pulse
@@ -92,35 +64,68 @@ export const Card3D = ({
         meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.5) * 0.1
       }
     }
+
+    // Interactive tilt toward cursor (on group, not mesh, to avoid conflict with flip animation)
+    if (groupRef.current && interactive) {
+      if (isHovered) {
+        const cardWorldPos = new THREE.Vector3(...position)
+        const dx = pointer.x * 5 - cardWorldPos.x
+        const dy = pointer.y * 3 - cardWorldPos.y
+
+        // Very subtle tilt (max 0.15 radians = ~8.5 degrees)
+        targetRotation.current.x = THREE.MathUtils.clamp(-dy * 0.08, -0.15, 0.15)
+        targetRotation.current.y = THREE.MathUtils.clamp(dx * 0.08, -0.15, 0.15)
+      } else {
+        // Return to neutral
+        targetRotation.current.x = 0
+        targetRotation.current.y = 0
+      }
+
+      // Smooth interpolation
+      groupRef.current.rotation.x = THREE.MathUtils.lerp(
+        groupRef.current.rotation.x,
+        targetRotation.current.x,
+        0.1
+      )
+      groupRef.current.rotation.y = THREE.MathUtils.lerp(
+        groupRef.current.rotation.y,
+        targetRotation.current.y,
+        0.1
+      )
+    }
   })
 
   const CardMesh = (
     <SafeTexture url={imagePath}>
       {(texture) => (
-        <a.mesh
-          ref={meshRef}
-          rotation-y={rotationY}
-          scale={scale}
+        <a.group
+          ref={groupRef}
           position-x={position[0]}
           position-y={position[1]}
           position-z={interactive && hoverLift ? posZ : position[2]}
-          onPointerEnter={() => interactive && setIsHovered(true)}
-          onPointerLeave={() => interactive && setIsHovered(false)}
         >
-          <RoundedBox args={[size[0], size[1], 0.01]} radius={0.1} smoothness={4}>
-            <meshStandardMaterial
-              map={texture}
-              transparent
-              side={THREE.DoubleSide}
-            />
-          </RoundedBox>
-        </a.mesh>
+          <a.mesh
+            ref={meshRef}
+            rotation-y={rotationY}
+            scale={scale}
+            onPointerEnter={() => interactive && setIsHovered(true)}
+            onPointerLeave={() => interactive && setIsHovered(false)}
+          >
+            <RoundedBox args={[size[0], size[1], 0.001]} radius={0.08} smoothness={4}>
+              <meshBasicMaterial
+                map={texture}
+                transparent
+                side={THREE.DoubleSide}
+              />
+            </RoundedBox>
+          </a.mesh>
+        </a.group>
       )}
     </SafeTexture>
   )
 
   // Wrap in Float component if enabled
-  if (floatAnimation) {
+  if (floatAnimation && !interactive) {
     return (
       <Float speed={1} rotationIntensity={0.1} floatIntensity={0.2}>
         {CardMesh}
