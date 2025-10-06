@@ -71,15 +71,43 @@ npm run test:e2e:debug
 
 ### ✅ Completed
 - Full React Three Fiber app implementation
-- All core features working
+- Unified canvas architecture with smooth scene transitions
+- Core 3D card rendering with flat appearance and rounded corners (alpha mask)
+- Basic UI features:
+  - Tab interface for card content (Meaning/Questions/Actions)
+  - Quote hover with sparkle animation
+  - Card selection instruction text in 3D
+  - Breathing exercise with countdown
+  - Split-screen layout (3D left, content panel right)
 - Comprehensive test suite (Vitest + Playwright)
 - **AI-driven development workflow** with Playwright MCP server
 - TypeScript integration
 - Responsive design
 - Local development environment
 
-### 🔧 Known Issues
-- **GitHub Pages Deployment**: Git LFS media files causing deployment failures
+### 🚧 In Progress / Known Issues
+
+**From transcript.txt (source of truth for requirements):**
+
+1. **Card Corner Rounding** - ✅ DONE (using alpha mask)
+2. **Tab Interface for Card Viewing** - ✅ DONE (Meaning/Questions/Actions tabs)
+3. **Quote Display** - ✅ DONE (hover on sparkle below card)
+4. **Card Selection Text** - ✅ DONE ("Trust your intuition", "Take a deep breath", "In and out", "Feel into the cards...")
+5. **Card of the Day Layout** - ✅ DONE (card left, content panel right with golden orb)
+6. **Breathing Exercise** - ✅ DONE (countdown timer, 4s in / 7s out, 3 cycles)
+
+**Still TODO (from transcript):**
+
+7. **Tilt-toward-cursor NOT working universally** - Currently broken/not functional across all card instances
+8. **Shuffle Animation** - Cards should fly to center, stack, then fly out to new positions
+9. **Card Selection Transition** - When clicking card, smooth animation to viewing mode (others fade/fly out)
+10. **Wing Element from "Let the Light In" card** - Add to Welcome screen as decorative element
+11. **Card Content from PDF** - Parse PDF and create individual text files per card (meaning, questions, actions)
+12. **Editable Document Generation** - Create document with card images + text for Tanja's reference
+13. **Text overlapping with cards in selection screen** - Layout needs adjustment
+
+**Technical Debt:**
+- GitHub Pages Deployment: Git LFS media files causing deployment failures
   - Issue: `gh-pages` package fails with E2BIG error due to 278MB of card images
   - Solution needed: Investigate GitHub Actions deployment or alternative hosting
 
