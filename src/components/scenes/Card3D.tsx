@@ -1,6 +1,6 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useMemo } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
-import { Float, RoundedBox } from '@react-three/drei'
+import { Float } from '@react-three/drei'
 import { useSpring, a } from '@react-spring/three'
 import { SafeTexture } from '../TextureLoader'
 import * as THREE from 'three'
@@ -14,6 +14,40 @@ interface Card3DProps {
   position?: [number, number, number]
   interactive?: boolean
   hoverLift?: boolean
+}
+
+// Create rounded corner alpha mask using canvas
+const createRoundedMask = (width: number, height: number, radius: number) => {
+  const canvas = document.createElement('canvas')
+  const pixelWidth = 512
+  const pixelHeight = Math.round(pixelWidth * (height / width))
+  canvas.width = pixelWidth
+  canvas.height = pixelHeight
+
+  const ctx = canvas.getContext('2d')!
+  ctx.fillStyle = 'black'
+  ctx.fillRect(0, 0, pixelWidth, pixelHeight)
+
+  // Draw rounded rectangle in white
+  ctx.fillStyle = 'white'
+  const r = radius * pixelWidth / width
+
+  ctx.beginPath()
+  ctx.moveTo(r, 0)
+  ctx.lineTo(pixelWidth - r, 0)
+  ctx.quadraticCurveTo(pixelWidth, 0, pixelWidth, r)
+  ctx.lineTo(pixelWidth, pixelHeight - r)
+  ctx.quadraticCurveTo(pixelWidth, pixelHeight, pixelWidth - r, pixelHeight)
+  ctx.lineTo(r, pixelHeight)
+  ctx.quadraticCurveTo(0, pixelHeight, 0, pixelHeight - r)
+  ctx.lineTo(0, r)
+  ctx.quadraticCurveTo(0, 0, r, 0)
+  ctx.closePath()
+  ctx.fill()
+
+  const texture = new THREE.CanvasTexture(canvas)
+  texture.needsUpdate = true
+  return texture
 }
 
 export const Card3D = ({
@@ -31,6 +65,9 @@ export const Card3D = ({
   const [isHovered, setIsHovered] = useState(false)
   const { pointer } = useThree()
   const targetRotation = useRef({ x: 0, y: 0 })
+
+  // Create alpha mask for rounded corners
+  const alphaMask = useMemo(() => createRoundedMask(size[0], size[1], 0.1), [size])
 
   // Flip animation (card reveal)
   const { rotationY } = useSpring({
@@ -111,13 +148,13 @@ export const Card3D = ({
             onPointerEnter={() => interactive && setIsHovered(true)}
             onPointerLeave={() => interactive && setIsHovered(false)}
           >
-            <RoundedBox args={[size[0], size[1], 0.001]} radius={0.08} smoothness={4}>
-              <meshBasicMaterial
-                map={texture}
-                transparent
-                side={THREE.DoubleSide}
-              />
-            </RoundedBox>
+            <planeGeometry args={[size[0], size[1]]} />
+            <meshBasicMaterial
+              map={texture}
+              alphaMap={alphaMask}
+              transparent
+              side={THREE.DoubleSide}
+            />
           </a.mesh>
         </a.group>
       )}
