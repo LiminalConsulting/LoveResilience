@@ -6,27 +6,61 @@ import { useAppStore } from '../store/useAppStore'
 export const Centering = () => {
   const { setState, setCenteringProgress, setCenteringPhase } = useAppStore()
   const [phase, setPhase] = useState<'check' | 'breathe' | 'intention' | 'ready'>('check')
-  const [progress] = useState(0)
+  const [breathCount, setBreathCount] = useState(0)
+  const [breathPhase, setBreathPhase] = useState<'in' | 'out'>('in')
+  const [countdown, setCountdown] = useState(4)
 
   // Sync phase with store so UnifiedCanvas can access it
   useEffect(() => {
     setCenteringPhase(phase)
   }, [phase, setCenteringPhase])
-  
+
   const startBreathing = () => {
     setPhase('breathe')
     setCenteringProgress(0.3)
-    
-    setTimeout(() => {
-      setPhase('intention')
-      setCenteringProgress(0.7)
-      
-      setTimeout(() => {
-        setPhase('ready')
-        setCenteringProgress(1)
-      }, 3000)
-    }, 8000)
+    setBreathCount(0)
+    setBreathPhase('in')
+    setCountdown(4)
   }
+
+  // Breathing cycle logic
+  useEffect(() => {
+    if (phase !== 'breathe') return
+
+    const interval = setInterval(() => {
+      setCountdown(prev => {
+        if (prev > 1) {
+          return prev - 1
+        } else {
+          // Switch between in and out
+          if (breathPhase === 'in') {
+            setBreathPhase('out')
+            return 7 // 7 seconds for exhale
+          } else {
+            // Complete one full breath cycle
+            const newCount = breathCount + 1
+            setBreathCount(newCount)
+
+            if (newCount >= 3) {
+              // Finished 3 breaths, move to intention
+              setPhase('intention')
+              setCenteringProgress(0.7)
+              setTimeout(() => {
+                setPhase('ready')
+                setCenteringProgress(1)
+              }, 3000)
+              return 0
+            } else {
+              setBreathPhase('in')
+              return 4 // 4 seconds for inhale
+            }
+          }
+        }
+      })
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [phase, breathPhase, breathCount, setCenteringProgress])
   
   const skipCentering = () => {
     setCenteringProgress(1)
@@ -67,10 +101,18 @@ export const Centering = () => {
         
         {phase === 'breathe' && (
           <div className="breath-guidance">
-            <p className="breath-instruction">
-              Breathe in as the orb expands, breathe out as it contracts
+            <div className="breath-display">
+              <div className="breath-instruction-large">
+                {breathPhase === 'in' ? 'In' : 'Out'}
+              </div>
+              <div className="breath-countdown">
+                {countdown}
+              </div>
+            </div>
+            <p className="breath-cycle-info">
+              Breath {breathCount + 1} of 3
             </p>
-            <button 
+            <button
               className="action-button secondary small"
               onClick={skipCentering}
             >
@@ -167,13 +209,42 @@ export const Centering = () => {
         
         .breath-guidance, .intention-guidance, .ready-message {
           text-align: center;
-          max-width: 300px;
+          max-width: 400px;
         }
-        
+
+        .breath-display {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 1rem;
+          margin-bottom: 1.5rem;
+        }
+
+        .breath-instruction-large {
+          font-size: 2.5rem;
+          color: #d4af37;
+          font-weight: 300;
+          text-transform: uppercase;
+          letter-spacing: 0.2em;
+        }
+
+        .breath-countdown {
+          font-size: 4rem;
+          color: #5a5a5a;
+          font-weight: 300;
+          line-height: 1;
+        }
+
+        .breath-cycle-info {
+          color: #8a8a8a;
+          font-size: 1rem;
+          margin-bottom: 1rem;
+        }
+
         .breath-instruction, .intention-instruction, .ready-text {
           color: #6a6a6a;
-          font-size: 0.95rem;
-          line-height: 1.4;
+          font-size: 1.1rem;
+          line-height: 1.6;
           margin-bottom: 1rem;
         }
         

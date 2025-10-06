@@ -27,48 +27,56 @@ export const DailyCard = () => {
   
   return (
     <div className="daily-container">
-      <div className="daily-header">
-        <h1 className="daily-title">Your Card for Today</h1>
-        <p className="daily-date">{currentDate}</p>
-      </div>
-      
-      <div className="daily-card-display">
+      <div className="daily-card-section">
         {/* 3D scene rendered by UnifiedCanvas */}
-      </div>
-      
-      <div className="daily-content">
-        <div className="daily-message">
-          <h3>Today's Message</h3>
-          <p>{selectedCard.meaning}</p>
-        </div>
-        
-        <div className="daily-intention">
-          <h3>Intention for Today</h3>
-          <p>How might you embody the energy of <strong>{selectedCard.theme}</strong> in your day?</p>
+
+        {/* Golden mandala orb rotating in background - PLACEHOLDER */}
+        <div className="golden-orb">
+          <div className="orb-inner">✧</div>
         </div>
       </div>
-      
-      <div className="daily-actions">
-        <button 
-          className="action-button primary"
-          onClick={() => setState('viewing')}
-        >
-          Explore Deeper
-        </button>
-        
-        <button 
-          className="action-button secondary"
-          onClick={() => setState('centering')}
-        >
-          Draw Another Card
-        </button>
-        
-        <button 
-          className="action-button secondary"
-          onClick={() => setState('welcome')}
-        >
-          Return Home
-        </button>
+
+      <div className="daily-content-section">
+        <div className="daily-header">
+          <h1 className="daily-title">Your Card for Today</h1>
+          <p className="daily-date">{currentDate}</p>
+          <h2 className="card-theme">{selectedCard.theme}</h2>
+        </div>
+
+        <div className="daily-messages">
+          <div className="daily-message">
+            <h3>Today's Message</h3>
+            <p>{selectedCard.meaning || 'Let the energy of this card guide your day.'}</p>
+          </div>
+
+          <div className="daily-intention">
+            <h3>Intention for Today</h3>
+            <p>How might you embody the energy of <strong>{selectedCard.theme}</strong> in your day?</p>
+          </div>
+        </div>
+
+        <div className="daily-actions">
+          <button
+            className="action-button primary"
+            onClick={() => setState('viewing')}
+          >
+            Explore Deeper
+          </button>
+
+          <button
+            className="action-button secondary"
+            onClick={() => setState('centering')}
+          >
+            Draw Another Card
+          </button>
+
+          <button
+            className="action-button secondary"
+            onClick={() => setState('welcome')}
+          >
+            Return Home
+          </button>
+        </div>
       </div>
       
       <style>{`
@@ -79,13 +87,40 @@ export const DailyCard = () => {
           width: 100vw;
           height: 100vh;
           display: flex;
-          flex-direction: column;
-          align-items: center;
-          padding: 2rem;
-          overflow-y: auto;
           pointer-events: auto;
         }
-        
+
+        .daily-card-section {
+          flex: 1;
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .golden-orb {
+          position: absolute;
+          width: 400px;
+          height: 400px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          animation: rotateOrb 20s linear infinite;
+          opacity: 0.3;
+          z-index: 0;
+        }
+
+        .orb-inner {
+          font-size: 20rem;
+          color: #d4af37;
+          text-shadow: 0 0 50px rgba(212, 175, 55, 0.5);
+        }
+
+        @keyframes rotateOrb {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+
         .daily-loading {
           width: 100vw;
           height: 100vh;
@@ -94,62 +129,76 @@ export const DailyCard = () => {
           justify-content: center;
           background: linear-gradient(135deg, #f5f3f0 0%, #e8e4e0 100%);
         }
-        
+
         .daily-loading p {
           color: #8a8a8a;
           font-size: 1.1rem;
         }
-        
+
+        .daily-content-section {
+          flex: 1;
+          padding: 3rem;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          background: rgba(255, 255, 255, 0.85);
+          backdrop-filter: blur(10px);
+          overflow-y: auto;
+        }
+
         .daily-header {
           text-align: center;
-          margin-bottom: 1rem;
+          margin-bottom: 2rem;
         }
-        
+
         .daily-title {
-          font-size: 2.5rem;
+          font-size: 2rem;
           color: #5a5a5a;
           font-weight: 300;
           margin-bottom: 0.5rem;
         }
-        
+
         .daily-date {
           color: #8a8a8a;
-          font-size: 1.1rem;
+          font-size: 1rem;
           font-weight: 400;
+          margin-bottom: 1.5rem;
         }
-        
-        .daily-card-display {
-          width: 100%;
-          max-width: 500px;
-          height: 400px;
-          margin: 1rem 0;
+
+        .card-theme {
+          font-size: 2.5rem;
+          color: #5a5a5a;
+          font-weight: 300;
+          text-transform: capitalize;
+          margin-top: 1rem;
         }
-        
-        .daily-content {
-          max-width: 600px;
-          margin: 1rem 0;
-          text-align: center;
+
+        .daily-messages {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
         }
-        
+
         .daily-message, .daily-intention {
-          margin-bottom: 2rem;
-          padding: 1.5rem;
-          background: rgba(255, 255, 255, 0.7);
+          padding: 2rem;
+          background: rgba(255, 255, 255, 0.5);
           border-radius: 20px;
-          backdrop-filter: blur(10px);
+          backdrop-filter: blur(5px);
         }
-        
+
         .daily-message h3, .daily-intention h3 {
           color: #d4af37;
           font-size: 1.3rem;
           margin-bottom: 1rem;
           font-weight: 500;
+          text-transform: capitalize;
         }
-        
+
         .daily-message p, .daily-intention p {
           color: #6a6a6a;
-          line-height: 1.6;
-          font-size: 1rem;
+          line-height: 1.8;
+          font-size: 1.15rem;
         }
         
         .daily-actions {

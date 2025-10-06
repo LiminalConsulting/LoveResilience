@@ -3,130 +3,149 @@ import { useAppStore } from '../store/useAppStore'
 
 // 3D scene moved to ViewingScene in UnifiedCanvas
 
-const CardContent = ({ 
-  theme, 
-  meaning, 
-  questions, 
-  actions, 
-  onNext 
-}: { 
+const CardContent = ({
+  theme,
+  meaning,
+  questions,
+  actions,
+  quotes
+}: {
   theme: string
   meaning?: string
   questions?: string[]
   actions?: string[]
-  onNext: (section: string) => void
+  quotes?: string[]
 }) => {
-  const [currentSection, setCurrentSection] = useState<'meaning' | 'questions' | 'actions'>('meaning')
-  
-  const nextSection = () => {
-    if (currentSection === 'meaning') {
-      setCurrentSection('questions')
-      onNext('questions')
-    } else if (currentSection === 'questions') {
-      setCurrentSection('actions')
-      onNext('actions')
-    }
-  }
-  
+  const [currentSection, setCurrentSection] = useState<'meaning' | 'questions' | 'actions' | null>(null)
+
   const renderContent = () => {
+    if (!currentSection) {
+      return (
+        <div className="tab-prompt">
+          <p>Click on a section above to explore</p>
+        </div>
+      )
+    }
+
     switch (currentSection) {
       case 'meaning':
         return (
           <div className="content-section">
-            <h3>Meaning</h3>
-            <p>{meaning}</p>
+            <p>{meaning || 'Meaning content will be added soon.'}</p>
           </div>
         )
-      
+
       case 'questions':
         return (
           <div className="content-section">
-            <h3>Reflection Questions</h3>
             <ul>
               {questions?.map((question, index) => (
                 <li key={index}>{question}</li>
-              ))}
+              )) || <li>Reflection questions will be added soon.</li>}
             </ul>
           </div>
         )
-      
+
       case 'actions':
         return (
           <div className="content-section">
-            <h3>Inspired Actions</h3>
             <ul>
               {actions?.map((action, index) => (
                 <li key={index}>{action}</li>
-              ))}
+              )) || <li>Inspired actions will be added soon.</li>}
             </ul>
           </div>
         )
-      
+
       default:
         return null
     }
   }
-  
+
   return (
     <div className="card-content">
       <h2 className="card-theme">{theme}</h2>
-      
-      {renderContent()}
-      
-      <div className="content-navigation">
-        {currentSection !== 'actions' && (
-          <button className="nav-button primary" onClick={nextSection}>
-            {currentSection === 'meaning' ? 'Reflect' : 'Take Action'}
-          </button>
-        )}
-        
-        <div className="section-indicators">
-          <span className={`indicator ${currentSection === 'meaning' ? 'active' : ''}`}>•</span>
-          <span className={`indicator ${currentSection === 'questions' ? 'active' : ''}`}>•</span>
-          <span className={`indicator ${currentSection === 'actions' ? 'active' : ''}`}>•</span>
-        </div>
+
+      {/* Tab Headers */}
+      <div className="tab-headers">
+        <button
+          className={`tab-header ${currentSection === 'meaning' ? 'active' : ''}`}
+          onClick={() => setCurrentSection(currentSection === 'meaning' ? null : 'meaning')}
+        >
+          Meaning
+        </button>
+        <button
+          className={`tab-header ${currentSection === 'questions' ? 'active' : ''}`}
+          onClick={() => setCurrentSection(currentSection === 'questions' ? null : 'questions')}
+        >
+          Questions
+        </button>
+        <button
+          className={`tab-header ${currentSection === 'actions' ? 'active' : ''}`}
+          onClick={() => setCurrentSection(currentSection === 'actions' ? null : 'actions')}
+        >
+          Actions
+        </button>
       </div>
+
+      {/* Content Area */}
+      {renderContent()}
     </div>
   )
 }
 
 export const CardViewing = () => {
   const { selectedCard, setState, reset } = useAppStore()
-  const [currentSection, setCurrentSection] = useState('meaning')
-  
+  const [showQuote, setShowQuote] = useState(false)
+
   if (!selectedCard) {
     setState('welcome')
     return null
   }
-  
+
+  // Placeholder quote - will be replaced with actual card quotes
+  const quote = "Let the light illuminate your path forward."
+
   return (
     <div className="viewing-container">
       <div className="card-display">
         {/* 3D scene rendered by UnifiedCanvas */}
+
+        {/* Quote hover element - positioned below card */}
+        <div className="quote-container">
+          <div
+            className="quote-trigger"
+            onMouseEnter={() => setShowQuote(true)}
+            onMouseLeave={() => setShowQuote(false)}
+          >
+            ✨
+          </div>
+          {showQuote && (
+            <div className="quote-bubble">
+              <p>"{quote}"</p>
+            </div>
+          )}
+        </div>
       </div>
-      
+
       <div className="card-info">
         <CardContent
           theme={selectedCard.theme}
           meaning={selectedCard.meaning}
           questions={selectedCard.questions}
           actions={selectedCard.actions}
-          onNext={setCurrentSection}
+          quotes={[quote]}
         />
-        
-        <div className="section-indicator">
-          Current section: {currentSection}
-        </div>
-        
+
         <div className="viewing-actions">
-          <button 
+          <button
             className="action-button secondary"
             onClick={() => setState('selection')}
           >
             Draw Another
           </button>
-          
-          <button 
+
+          <button
             className="action-button secondary"
             onClick={() => {
               reset()
@@ -148,111 +167,164 @@ export const CardViewing = () => {
           height: 100vh;
           pointer-events: auto;
         }
-        
+
         .card-display {
           flex: 1;
           position: relative;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
         }
-        
+
+        .quote-container {
+          position: absolute;
+          bottom: 15%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 1rem;
+        }
+
+        .quote-trigger {
+          font-size: 2rem;
+          cursor: pointer;
+          animation: sparkle 2s ease-in-out infinite;
+          transition: transform 0.3s ease;
+        }
+
+        .quote-trigger:hover {
+          transform: scale(1.2);
+        }
+
+        @keyframes sparkle {
+          0%, 100% { opacity: 0.6; }
+          50% { opacity: 1; }
+        }
+
+        .quote-bubble {
+          background: rgba(255, 255, 255, 0.95);
+          padding: 1.5rem 2rem;
+          border-radius: 20px;
+          box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
+          border: 2px solid #d4af37;
+          max-width: 300px;
+          animation: fadeIn 0.3s ease;
+        }
+
+        .quote-bubble p {
+          color: #5a5a5a;
+          font-size: 1rem;
+          font-style: italic;
+          line-height: 1.5;
+          margin: 0;
+          text-align: center;
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
         .card-info {
           flex: 1;
-          padding: 2rem;
+          padding: 3rem;
           display: flex;
           flex-direction: column;
           justify-content: space-between;
-          background: rgba(255, 255, 255, 0.8);
+          background: rgba(255, 255, 255, 0.85);
           backdrop-filter: blur(10px);
         }
-        
+
         .card-theme {
-          font-size: 2rem;
+          font-size: 2.5rem;
           color: #5a5a5a;
-          margin-bottom: 1rem;
+          margin-bottom: 2rem;
           text-transform: capitalize;
           font-weight: 300;
+          text-align: center;
         }
-        
+
+        .tab-headers {
+          display: flex;
+          gap: 1rem;
+          margin-bottom: 2rem;
+          justify-content: center;
+          border-bottom: 2px solid rgba(212, 175, 55, 0.2);
+          padding-bottom: 0.5rem;
+        }
+
+        .tab-header {
+          background: none;
+          border: none;
+          padding: 0.8rem 1.5rem;
+          font-size: 1.1rem;
+          font-weight: 500;
+          color: #8a8a8a;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          border-bottom: 3px solid transparent;
+          position: relative;
+          bottom: -0.5rem;
+        }
+
+        .tab-header:hover {
+          color: #d4af37;
+        }
+
+        .tab-header.active {
+          color: #d4af37;
+          border-bottom-color: #d4af37;
+        }
+
+        .tab-prompt {
+          text-align: center;
+          padding: 3rem 2rem;
+          color: #8a8a8a;
+          font-size: 1.1rem;
+          font-style: italic;
+        }
+
         .content-section {
           flex: 1;
           margin: 1rem 0;
+          padding: 1.5rem;
+          animation: fadeIn 0.3s ease;
         }
-        
-        .content-section h3 {
-          color: #d4af37;
-          font-size: 1.2rem;
-          margin-bottom: 1rem;
-          font-weight: 500;
-        }
-        
+
         .content-section p {
           color: #6a6a6a;
-          line-height: 1.6;
-          font-size: 1rem;
+          line-height: 1.8;
+          font-size: 1.15rem;
         }
-        
+
         .content-section ul {
           list-style: none;
           padding: 0;
         }
-        
+
         .content-section li {
           color: #6a6a6a;
-          line-height: 1.6;
-          margin-bottom: 0.8rem;
-          padding-left: 1.5rem;
+          line-height: 1.8;
+          margin-bottom: 1rem;
+          padding-left: 1.8rem;
           position: relative;
+          font-size: 1.1rem;
         }
-        
+
         .content-section li::before {
           content: '•';
           color: #d4af37;
           font-weight: bold;
           position: absolute;
           left: 0;
-        }
-        
-        .content-navigation {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 1rem;
-          margin-top: 2rem;
-        }
-        
-        .nav-button {
-          padding: 0.8rem 2rem;
-          border: none;
-          border-radius: 25px;
-          font-size: 1rem;
-          font-weight: 500;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        }
-        
-        .nav-button.primary {
-          background: linear-gradient(135deg, #d4af37, #b8941f);
-          color: white;
-          box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
-        }
-        
-        .nav-button.primary:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
-        }
-        
-        .section-indicators {
-          display: flex;
-          gap: 0.5rem;
-        }
-        
-        .indicator {
-          font-size: 1.5rem;
-          color: #ddd;
-          transition: color 0.3s ease;
-        }
-        
-        .indicator.active {
-          color: #d4af37;
+          font-size: 1.3rem;
         }
         
         .viewing-actions {

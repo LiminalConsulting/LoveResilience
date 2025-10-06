@@ -12,15 +12,22 @@ export const CardSelection = () => {
 
   return (
     <div className="selection-container">
+      <div className="selection-instructions">
+        <h2>Trust your intuition</h2>
+        <p>Take a deep breath</p>
+        <p>In and out</p>
+        <p className="main-instruction">Feel into the cards and choose the one that calls to you</p>
+      </div>
+
       <div className="selection-actions">
-        <button 
+        <button
           className="action-button secondary"
           onClick={shuffleCards}
         >
           Shuffle Cards
         </button>
-        
-        <button 
+
+        <button
           className="action-button secondary"
           onClick={() => setState('welcome')}
         >
@@ -37,7 +44,38 @@ export const CardSelection = () => {
           height: 100vh;
           pointer-events: none;
         }
-        
+
+        .selection-instructions {
+          position: absolute;
+          top: 15%;
+          left: 50%;
+          transform: translateX(-50%);
+          text-align: center;
+          pointer-events: none;
+          z-index: 10;
+        }
+
+        .selection-instructions h2 {
+          font-size: 2rem;
+          color: #5a5a5a;
+          font-weight: 400;
+          margin-bottom: 0.5rem;
+        }
+
+        .selection-instructions p {
+          font-size: 1.1rem;
+          color: #7a7a7a;
+          margin: 0.3rem 0;
+          font-weight: 300;
+        }
+
+        .selection-instructions .main-instruction {
+          font-size: 1.2rem;
+          color: #6a6a6a;
+          margin-top: 1rem;
+          font-style: italic;
+        }
+
         .selection-actions {
           position: absolute;
           bottom: 5%;

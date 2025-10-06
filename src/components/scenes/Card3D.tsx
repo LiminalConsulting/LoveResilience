@@ -53,21 +53,40 @@ export const Card3D = ({
 
   const CardMesh = (
     <SafeTexture url={imagePath}>
-      {(texture) => (
-        <a.mesh
-          ref={meshRef}
-          rotation-y={rotationY}
-          scale={scale}
-          position={position}
-        >
-          <planeGeometry args={size} />
-          <meshStandardMaterial
-            map={texture}
-            transparent
-            side={THREE.DoubleSide}
-          />
-        </a.mesh>
-      )}
+      {(texture) => {
+        // Create rounded rectangle shape for card
+        const shape = new THREE.Shape()
+        const width = size[0]
+        const height = size[1]
+        const radius = 0.15 // Corner radius
+
+        // Draw rounded rectangle
+        shape.moveTo(-width/2 + radius, -height/2)
+        shape.lineTo(width/2 - radius, -height/2)
+        shape.quadraticCurveTo(width/2, -height/2, width/2, -height/2 + radius)
+        shape.lineTo(width/2, height/2 - radius)
+        shape.quadraticCurveTo(width/2, height/2, width/2 - radius, height/2)
+        shape.lineTo(-width/2 + radius, height/2)
+        shape.quadraticCurveTo(-width/2, height/2, -width/2, height/2 - radius)
+        shape.lineTo(-width/2, -height/2 + radius)
+        shape.quadraticCurveTo(-width/2, -height/2, -width/2 + radius, -height/2)
+
+        return (
+          <a.mesh
+            ref={meshRef}
+            rotation-y={rotationY}
+            scale={scale}
+            position={position}
+          >
+            <shapeGeometry args={[shape]} />
+            <meshStandardMaterial
+              map={texture}
+              transparent
+              side={THREE.DoubleSide}
+            />
+          </a.mesh>
+        )
+      }}
     </SafeTexture>
   )
 
