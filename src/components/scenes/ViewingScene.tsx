@@ -14,6 +14,7 @@ export const ViewingScene = ({ imagePath }: ViewingSceneProps) => {
       <Card3D
         imagePath={imagePath}
         size={[3, 4.5]}
+        position={[-2.5, 0, 0]}
         flipAnimation={true}
         floatAnimation={true}
       />

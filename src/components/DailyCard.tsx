@@ -27,16 +27,11 @@ export const DailyCard = () => {
   
   return (
     <div className="daily-container">
-      <div className="daily-card-section">
-        {/* 3D scene rendered by UnifiedCanvas */}
+      {/* Left side - empty space for 3D card from DailyCardScene */}
+      <div className="card-spacer"></div>
 
-        {/* Golden mandala orb rotating in background - PLACEHOLDER */}
-        <div className="golden-orb">
-          <div className="orb-inner">✧</div>
-        </div>
-      </div>
-
-      <div className="daily-content-section">
+      {/* Right side - content panel */}
+      <div className="content-panel">
         <div className="daily-header">
           <h1 className="daily-title">Your Card for Today</h1>
           <p className="daily-date">{currentDate}</p>
@@ -87,38 +82,12 @@ export const DailyCard = () => {
           width: 100vw;
           height: 100vh;
           display: flex;
-          pointer-events: auto;
+          pointer-events: none;
         }
 
-        .daily-card-section {
+        .card-spacer {
           flex: 1;
-          position: relative;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .golden-orb {
-          position: absolute;
-          width: 400px;
-          height: 400px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          animation: rotateOrb 20s linear infinite;
-          opacity: 0.3;
-          z-index: 0;
-        }
-
-        .orb-inner {
-          font-size: 20rem;
-          color: #d4af37;
-          text-shadow: 0 0 50px rgba(212, 175, 55, 0.5);
-        }
-
-        @keyframes rotateOrb {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
+          pointer-events: none;
         }
 
         .daily-loading {
@@ -135,7 +104,7 @@ export const DailyCard = () => {
           font-size: 1.1rem;
         }
 
-        .daily-content-section {
+        .content-panel {
           flex: 1;
           padding: 3rem;
           display: flex;
@@ -144,6 +113,7 @@ export const DailyCard = () => {
           background: rgba(255, 255, 255, 0.85);
           backdrop-filter: blur(10px);
           overflow-y: auto;
+          pointer-events: auto;
         }
 
         .daily-header {

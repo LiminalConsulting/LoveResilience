@@ -12,7 +12,11 @@ export const Centering = () => {
 
   // Sync phase with store so UnifiedCanvas can access it
   useEffect(() => {
-    setCenteringPhase(phase)
+    // Use setTimeout to avoid setState during render
+    const timer = setTimeout(() => {
+      setCenteringPhase(phase)
+    }, 0)
+    return () => clearTimeout(timer)
   }, [phase, setCenteringPhase])
 
   const startBreathing = () => {
@@ -45,10 +49,6 @@ export const Centering = () => {
               // Finished 3 breaths, move to intention
               setPhase('intention')
               setCenteringProgress(0.7)
-              setTimeout(() => {
-                setPhase('ready')
-                setCenteringProgress(1)
-              }, 3000)
               return 0
             } else {
               setBreathPhase('in')
@@ -61,6 +61,18 @@ export const Centering = () => {
 
     return () => clearInterval(interval)
   }, [phase, breathPhase, breathCount, setCenteringProgress])
+
+  // Handle intention -> ready transition
+  useEffect(() => {
+    if (phase === 'intention') {
+      const timer = setTimeout(() => {
+        setPhase('ready')
+        setCenteringProgress(1)
+      }, 3000)
+
+      return () => clearTimeout(timer)
+    }
+  }, [phase, setCenteringProgress])
   
   const skipCentering = () => {
     setCenteringProgress(1)

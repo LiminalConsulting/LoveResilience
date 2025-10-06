@@ -108,10 +108,9 @@ export const CardViewing = () => {
 
   return (
     <div className="viewing-container">
-      <div className="card-display">
-        {/* 3D scene rendered by UnifiedCanvas */}
-
-        {/* Quote hover element - positioned below card */}
+      {/* Left side - for 3D card from ViewingScene + quote */}
+      <div className="left-section">
+        {/* Quote hover element - positioned below card area */}
         <div className="quote-container">
           <div
             className="quote-trigger"
@@ -128,7 +127,8 @@ export const CardViewing = () => {
         </div>
       </div>
 
-      <div className="card-info">
+      {/* Right side - text content panel */}
+      <div className="info-panel">
         <CardContent
           theme={selectedCard.theme}
           meaning={selectedCard.meaning}
@@ -165,25 +165,26 @@ export const CardViewing = () => {
           display: flex;
           width: 100vw;
           height: 100vh;
-          pointer-events: auto;
+          pointer-events: none;
         }
 
-        .card-display {
+        .left-section {
           flex: 1;
           position: relative;
           display: flex;
           flex-direction: column;
           align-items: center;
-          justify-content: center;
+          justify-content: flex-end;
+          padding-bottom: 10%;
+          pointer-events: none;
         }
 
         .quote-container {
-          position: absolute;
-          bottom: 15%;
           display: flex;
           flex-direction: column;
           align-items: center;
           gap: 1rem;
+          pointer-events: auto;
         }
 
         .quote-trigger {
@@ -232,7 +233,7 @@ export const CardViewing = () => {
           }
         }
 
-        .card-info {
+        .info-panel {
           flex: 1;
           padding: 3rem;
           display: flex;
@@ -240,6 +241,7 @@ export const CardViewing = () => {
           justify-content: space-between;
           background: rgba(255, 255, 255, 0.85);
           backdrop-filter: blur(10px);
+          pointer-events: auto;
         }
 
         .card-theme {
