@@ -2,7 +2,7 @@
 number: 52
 name: "Rise"
 theme: "Adaptability & Hope"
-image: "52_rise.jpg"
+image: "52_rejuvenate_SERVING & HELPING.jpg"
 ---
 
 # Meaning

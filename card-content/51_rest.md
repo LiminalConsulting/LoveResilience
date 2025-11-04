@@ -2,7 +2,7 @@
 number: 51
 name: "Rest"
 theme: "Recovery & Integration"
-image: "51_rest.jpg"
+image: "51_reflecting_CAUSAL ANALYSIS.jpg"
 ---
 
 # Meaning

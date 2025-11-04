@@ -119,7 +119,10 @@ def generate_document(cards_dir, images_dir, output_path):
     cards_dir = Path(cards_dir)
     images_dir = Path(images_dir)
 
-    md_files = sorted(cards_dir.glob('*.md'),
+    # Get all markdown files, excluding README and extra files
+    all_md_files = cards_dir.glob('*.md')
+    numbered_files = [f for f in all_md_files if re.search(r'^\d+_', f.name)]
+    md_files = sorted(numbered_files,
                      key=lambda x: int(re.search(r'(\d+)_', x.name).group(1)))
 
     print(f"Found {len(md_files)} card files")

@@ -2,7 +2,7 @@
 number: 55
 name: "Tenderness"
 theme: "Before Self Love"
-image: "55_tenderness.jpg"
+image: "55_safe place_RESPONSIBILTY.jpg"
 ---
 
 # Meaning

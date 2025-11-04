@@ -2,7 +2,7 @@
 number: 49
 name: "Reflecting"
 theme: "Causal analysis"
-image: "49_reflecting.jpg"
+image: "49_purpose_PURPOSE.jpg"
 ---
 
 # Meaning

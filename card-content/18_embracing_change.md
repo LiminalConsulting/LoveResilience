@@ -2,7 +2,7 @@
 number: 18
 name: "Embracing Change"
 theme: ""
-image: "18_embracing_change.jpg"
+image: "18_embracing change.jpg"
 ---
 
 # Meaning

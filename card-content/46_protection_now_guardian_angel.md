@@ -2,7 +2,7 @@
 number: 46
 name: "Protection now Guardian Angel"
 theme: ""
-image: "46_protection_now_guardian_angel.jpg"
+image: "46_precious.jpg"
 ---
 
 # Meaning

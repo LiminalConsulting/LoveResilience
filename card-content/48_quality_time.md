@@ -2,7 +2,7 @@
 number: 48
 name: "Quality time"
 theme: ""
-image: "48_quality_time.jpg"
+image: "48_protection_SELF LOVE.jpg"
 ---
 
 # Meaning

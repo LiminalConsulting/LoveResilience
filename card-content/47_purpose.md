@@ -2,7 +2,7 @@
 number: 47
 name: "Purpose"
 theme: "Meaning & Inner Orientation"
-image: "47_purpose.jpg"
+image: "47_priority_DISCIPLINE_CAUSAL ANALYSIS.jpg"
 ---
 
 # Meaning

@@ -2,7 +2,7 @@
 number: 40
 name: "Music"
 theme: ""
-image: "40_music.jpg"
+image: "40_mindset_REALISTIC OPTIMISM.jpg"
 ---
 
 # Meaning

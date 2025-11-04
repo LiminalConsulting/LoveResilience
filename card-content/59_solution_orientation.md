@@ -2,7 +2,7 @@
 number: 59
 name: "Solution Orientation"
 theme: ""
-image: "59_solution_orientation.jpg"
+image: "59_setting boundaries.jpg"
 ---
 
 # Meaning

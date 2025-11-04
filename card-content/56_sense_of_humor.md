@@ -2,7 +2,7 @@
 number: 56
 name: "Sense of humor"
 theme: ""
-image: "56_sense_of_humor.jpg"
+image: "56_self love_DISTANCE OF SELF.jpg"
 ---
 
 # Meaning

@@ -4,10 +4,10 @@ import { useAppStore } from '../store/useAppStore'
 // 3D scene moved to CenteringScene in UnifiedCanvas
 
 export const Centering = () => {
-  const { setState, setCenteringProgress, setCenteringPhase } = useAppStore()
+  const { setState, setCenteringProgress, setCenteringPhase, setBreathPhase, setBreathCountdown } = useAppStore()
   const [phase, setPhase] = useState<'check' | 'breathe' | 'intention' | 'ready'>('check')
   const [breathCount, setBreathCount] = useState(0)
-  const [breathPhase, setBreathPhase] = useState<'in' | 'out'>('in')
+  const [breathPhase, setBreathPhaseLocal] = useState<'in' | 'out'>('in')
   const [countdown, setCountdown] = useState(4)
 
   // Sync phase with store so UnifiedCanvas can access it
@@ -19,11 +19,20 @@ export const Centering = () => {
     return () => clearTimeout(timer)
   }, [phase, setCenteringPhase])
 
+  // Sync breath phase and countdown with store
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setBreathPhase(breathPhase)
+      setBreathCountdown(countdown)
+    }, 0)
+    return () => clearTimeout(timer)
+  }, [breathPhase, countdown, setBreathPhase, setBreathCountdown])
+
   const startBreathing = () => {
     setPhase('breathe')
     setCenteringProgress(0.3)
     setBreathCount(0)
-    setBreathPhase('in')
+    setBreathPhaseLocal('in')
     setCountdown(4)
   }
 
@@ -38,7 +47,7 @@ export const Centering = () => {
         } else {
           // Switch between in and out
           if (breathPhase === 'in') {
-            setBreathPhase('out')
+            setBreathPhaseLocal('out')
             return 7 // 7 seconds for exhale
           } else {
             // Complete one full breath cycle
@@ -51,7 +60,7 @@ export const Centering = () => {
               setCenteringProgress(0.7)
               return 0
             } else {
-              setBreathPhase('in')
+              setBreathPhaseLocal('in')
               return 4 // 4 seconds for inhale
             }
           }
@@ -162,7 +171,7 @@ export const Centering = () => {
         
         .centering-actions {
           position: absolute;
-          bottom: 20%;
+          bottom: 8%;
           left: 50%;
           transform: translateX(-50%);
           display: flex;

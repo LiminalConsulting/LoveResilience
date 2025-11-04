@@ -2,7 +2,7 @@
 number: 53
 name: "Safe Space"
 theme: ""
-image: "53_safe_space.jpg"
+image: "53_rest_DISCIPLINE.jpg"
 ---
 
 # Meaning

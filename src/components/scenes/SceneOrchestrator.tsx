@@ -53,6 +53,8 @@ export const SceneOrchestrator = () => {
 
   const centeringPhase = useAppStore(state => state.centeringPhase)
   const centeringProgress = useAppStore(state => state.centeringProgress)
+  const breathPhase = useAppStore(state => state.breathPhase)
+  const breathCountdown = useAppStore(state => state.breathCountdown)
   const selectedCard = useAppStore(state => state.selectedCard)
 
   const transitionStartTime = useRef<number>(0)
@@ -85,7 +87,12 @@ export const SceneOrchestrator = () => {
       case 'welcome':
         return <WelcomeScene />
       case 'centering':
-        return <CenteringScene phase={centeringPhase} progress={centeringProgress} />
+        return <CenteringScene
+          phase={centeringPhase}
+          progress={centeringProgress}
+          breathPhase={breathPhase}
+          breathCountdown={breathCountdown}
+        />
       case 'selection':
         return <SelectionScene />
       case 'daily':
@@ -130,7 +137,12 @@ export const SceneOrchestrator = () => {
       {/* Current scene */}
       {currentState === 'welcome' && <WelcomeScene />}
       {currentState === 'centering' && (
-        <CenteringScene phase={centeringPhase} progress={centeringProgress} />
+        <CenteringScene
+          phase={centeringPhase}
+          progress={centeringProgress}
+          breathPhase={breathPhase}
+          breathCountdown={breathCountdown}
+        />
       )}
       {currentState === 'selection' && <SelectionScene />}
       {currentState === 'daily' && selectedCard && (

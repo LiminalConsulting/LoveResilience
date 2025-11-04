@@ -2,7 +2,7 @@
 number: 41
 name: "Oceans of emotions"
 theme: "Impulscontroll"
-image: "41_oceans_of_emotions_impulscontroll.jpg"
+image: "41_mountain_COURAGE.jpg"
 ---
 
 # Meaning

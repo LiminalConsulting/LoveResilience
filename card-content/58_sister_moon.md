@@ -2,7 +2,7 @@
 number: 58
 name: "Sister Moon"
 theme: ""
-image: "58_sister_moon.jpg"
+image: "58_sense of humor.jpg"
 ---
 
 # Meaning

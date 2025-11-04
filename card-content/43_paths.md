@@ -2,7 +2,7 @@
 number: 43
 name: "Paths"
 theme: ""
-image: "43_paths.jpg"
+image: "43_oceans of emotions.jpg"
 ---
 
 # Meaning

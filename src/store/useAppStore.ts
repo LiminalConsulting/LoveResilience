@@ -13,6 +13,8 @@ interface AppStore {
   dailyCard: Card | null
   centeringProgress: number
   centeringPhase: 'check' | 'breathe' | 'intention' | 'ready'
+  breathPhase: 'in' | 'out'
+  breathCountdown: number
 
   // Actions
   setState: (state: AppState) => void
@@ -26,6 +28,8 @@ interface AppStore {
   getDailyCard: () => Card | null
   setCenteringProgress: (progress: number) => void
   setCenteringPhase: (phase: 'check' | 'breathe' | 'intention' | 'ready') => void
+  setBreathPhase: (phase: 'in' | 'out') => void
+  setBreathCountdown: (countdown: number) => void
   reset: () => void
 }
 
@@ -64,6 +68,8 @@ export const useAppStore = create<AppStore>((set, get) => ({
   dailyCard: null,
   centeringProgress: 0,
   centeringPhase: 'check',
+  breathPhase: 'in',
+  breathCountdown: 4,
 
   setState: (state) => set({ currentState: state }),
 
@@ -129,6 +135,10 @@ export const useAppStore = create<AppStore>((set, get) => ({
   setCenteringProgress: (progress) => set({ centeringProgress: progress }),
 
   setCenteringPhase: (phase) => set({ centeringPhase: phase }),
+
+  setBreathPhase: (phase) => set({ breathPhase: phase }),
+
+  setBreathCountdown: (countdown) => set({ breathCountdown: countdown }),
 
   reset: () => set({
     currentState: 'welcome',

@@ -2,7 +2,7 @@
 number: 42
 name: "Paradise"
 theme: ""
-image: "42_paradise.jpg"
+image: "42_music.jpg"
 ---
 
 # Meaning

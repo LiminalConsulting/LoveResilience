@@ -2,7 +2,7 @@
 number: 44
 name: "Precious"
 theme: ""
-image: "44_precious.jpg"
+image: "44_paradise.jpg"
 ---
 
 # Meaning

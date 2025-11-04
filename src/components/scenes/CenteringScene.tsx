@@ -6,19 +6,43 @@ import * as THREE from 'three'
 interface CenteringSceneProps {
   phase: 'check' | 'breathe' | 'intention' | 'ready'
   progress: number
+  breathPhase: 'in' | 'out'
+  breathCountdown: number
 }
 
-const BreathingOrb = ({ isActive }: { isActive: boolean }) => {
+const BreathingOrb = ({
+  isActive,
+  breathPhase,
+  breathCountdown
+}: {
+  isActive: boolean
+  breathPhase: 'in' | 'out'
+  breathCountdown: number
+}) => {
   const meshRef = useRef<THREE.Mesh>(null)
   const materialRef = useRef<THREE.MeshStandardMaterial>(null)
+  const lastPhaseRef = useRef<'in' | 'out'>(breathPhase)
 
-  useFrame((state) => {
+  useFrame((state, delta) => {
     if (meshRef.current && materialRef.current && isActive) {
-      const breathCycle = Math.sin(state.clock.elapsedTime * 0.3) * 0.5 + 0.5
-      const scale = 0.5 + breathCycle * 0.3
+      const phaseDuration = breathPhase === 'in' ? 4 : 7
+      const elapsed = phaseDuration - breathCountdown
+      const progress = Math.min(Math.max(elapsed / phaseDuration, 0), 1)
+
+      // Smooth easing with sine wave (half period)
+      const eased = Math.sin(progress * Math.PI / 2)
+
+      let scale: number
+      if (breathPhase === 'in') {
+        // Expand: 0.5 -> 1.0
+        scale = 0.5 + (eased * 0.5)
+      } else {
+        // Contract: 1.0 -> 0.5
+        scale = 1.0 - (eased * 0.5)
+      }
 
       meshRef.current.scale.setScalar(scale)
-      materialRef.current.opacity = 0.3 + breathCycle * 0.4
+      materialRef.current.opacity = 0.3 + (scale - 0.5) * 0.4
     }
   })
 
@@ -47,7 +71,7 @@ const CenteringText = ({ phase }: { phase: string }) => {
 
   return (
     <Text
-      position={[0, -1.5, 0]}
+      position={[0, -1.2, 0]}
       fontSize={0.4}
       color="#5a5a5a"
       anchorX="center"
@@ -60,10 +84,14 @@ const CenteringText = ({ phase }: { phase: string }) => {
   )
 }
 
-export const CenteringScene = ({ phase, progress }: CenteringSceneProps) => {
+export const CenteringScene = ({ phase, progress, breathPhase, breathCountdown }: CenteringSceneProps) => {
   return (
     <>
-      <BreathingOrb isActive={phase === 'breathe'} />
+      <BreathingOrb
+        isActive={phase === 'breathe'}
+        breathPhase={breathPhase}
+        breathCountdown={breathCountdown}
+      />
       <CenteringText phase={phase} />
     </>
   )

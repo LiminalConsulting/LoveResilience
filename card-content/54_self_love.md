@@ -2,7 +2,7 @@
 number: 54
 name: "Self Love"
 theme: ""
-image: "54_self_love.jpg"
+image: "54_rise_PURPOSE.jpg"
 ---
 
 # Meaning
