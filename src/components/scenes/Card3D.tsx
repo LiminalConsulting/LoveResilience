@@ -46,6 +46,10 @@ const createRoundedMask = (width: number, height: number, radius: number) => {
   ctx.fill()
 
   const texture = new THREE.CanvasTexture(canvas)
+  // Configure for non-power-of-2 dimensions
+  texture.minFilter = THREE.LinearFilter
+  texture.magFilter = THREE.LinearFilter
+  texture.generateMipmaps = false
   texture.needsUpdate = true
   return texture
 }
