@@ -8,7 +8,7 @@ interface SafeTextureProps {
   fallback?: React.ReactNode
 }
 
-// Custom texture loader that configures textures properly for Safari
+// Custom texture loader that waits for image to be fully ready (Safari fix)
 class ConfiguredTextureLoader extends THREE.TextureLoader {
   load(
     url: string,
@@ -16,39 +16,32 @@ class ConfiguredTextureLoader extends THREE.TextureLoader {
     onProgress?: (event: ProgressEvent) => void,
     onError?: (event: ErrorEvent) => void
   ): THREE.Texture {
-    const texture = super.load(
-      url,
-      (loadedTexture) => {
-        // Configure IMMEDIATELY on load, before any rendering
-        // Safari requires these to be set before the image is used
-        loadedTexture.minFilter = THREE.LinearFilter
-        loadedTexture.magFilter = THREE.LinearFilter
-        loadedTexture.generateMipmaps = false
-        loadedTexture.wrapS = THREE.ClampToEdgeWrapping
-        loadedTexture.wrapT = THREE.ClampToEdgeWrapping
-        loadedTexture.format = THREE.RGBAFormat
-        loadedTexture.type = THREE.UnsignedByteType
-        loadedTexture.needsUpdate = true
+    const texture = new THREE.Texture()
 
-        // Force immediate texture update
-        if (loadedTexture.image) {
-          loadedTexture.image.onload = null // Prevent duplicate processing
-        }
-
-        if (onLoad) onLoad(loadedTexture)
-      },
-      onProgress,
-      onError
-    )
-
-    // Also configure the initial texture object before image loads
+    // Configure texture BEFORE loading image (Safari requires this)
     texture.minFilter = THREE.LinearFilter
     texture.magFilter = THREE.LinearFilter
     texture.generateMipmaps = false
     texture.wrapS = THREE.ClampToEdgeWrapping
     texture.wrapT = THREE.ClampToEdgeWrapping
-    texture.format = THREE.RGBAFormat
-    texture.type = THREE.UnsignedByteType
+    texture.colorSpace = THREE.SRGBColorSpace
+
+    const loader = new THREE.ImageLoader(this.manager)
+    loader.setCrossOrigin(this.crossOrigin)
+    loader.setPath(this.path)
+
+    loader.load(
+      url,
+      (image) => {
+        // Image is fully loaded - assign immediately
+        texture.image = image
+        texture.needsUpdate = true
+
+        if (onLoad) onLoad(texture)
+      },
+      onProgress,
+      onError
+    )
 
     return texture
   }
