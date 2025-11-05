@@ -15,7 +15,13 @@ const TextureComponent = ({ url, children }: { url: string; children: (texture: 
   const texture = useLoader(
     THREE.TextureLoader,
     url,
-    undefined,
+    (loadedTexture) => {
+      // Configure texture for non-power-of-2 images
+      loadedTexture.minFilter = THREE.LinearFilter
+      loadedTexture.magFilter = THREE.LinearFilter
+      loadedTexture.generateMipmaps = false
+      loadedTexture.needsUpdate = true
+    },
     (err) => {
       console.error(`Failed to load texture: ${url}`, err)
       setError(err instanceof Error ? err : new Error(String(err)))
