@@ -50,7 +50,7 @@ def parse_markdown_file(filepath):
 
     return frontmatter, sections
 
-def add_card_to_document(doc, frontmatter, sections, image_path=None):
+def add_card_to_document(doc, frontmatter, sections, image_path=None, image_path2=None):
     """Add a card's content to the document with formatting."""
 
     # Card title (name)
@@ -67,6 +67,17 @@ def add_card_to_document(doc, frontmatter, sections, image_path=None):
             run.add_picture(str(image_path), width=Inches(3))
         except Exception as e:
             print(f"Warning: Could not add image {image_path}: {e}")
+
+    # Add second image if it exists (for cards with two versions)
+    if image_path2 and os.path.exists(image_path2):
+        paragraph = doc.add_paragraph()
+        paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        run = paragraph.add_run()
+        try:
+            # Add second image with width of 3 inches (adjust as needed)
+            run.add_picture(str(image_path2), width=Inches(3))
+        except Exception as e:
+            print(f"Warning: Could not add second image {image_path2}: {e}")
 
     # Add each section
     section_order = ['Meaning', 'Question', 'Action', 'Quote']
@@ -143,8 +154,17 @@ def generate_document(cards_dir, images_dir, output_path):
                     print(f"  Warning: Image not found: {image_path}")
                     image_path = None
 
+            # Find second image if it exists (for cards with two versions)
+            image_filename2 = frontmatter.get('image2')
+            image_path2 = None
+            if image_filename2:
+                image_path2 = images_dir / image_filename2
+                if not image_path2.exists():
+                    print(f"  Warning: Second image not found: {image_path2}")
+                    image_path2 = None
+
             # Add card to document
-            add_card_to_document(doc, frontmatter, sections, image_path)
+            add_card_to_document(doc, frontmatter, sections, image_path, image_path2)
 
         except Exception as e:
             print(f"  Error processing {md_file.name}: {e}")
