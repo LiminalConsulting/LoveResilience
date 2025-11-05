@@ -18,6 +18,8 @@ interface Card3DProps {
 
 // Create rounded corner alpha mask using canvas
 const createRoundedMask = (width: number, height: number, radius: number) => {
+  console.log('[AlphaMask] Creating rounded mask:', { width, height, radius })
+
   const canvas = document.createElement('canvas')
   const pixelWidth = 512
   const pixelHeight = Math.round(pixelWidth * (height / width))
@@ -55,6 +57,13 @@ const createRoundedMask = (width: number, height: number, radius: number) => {
   texture.format = THREE.RGBAFormat
   texture.type = THREE.UnsignedByteType
   texture.needsUpdate = true
+
+  console.log('[AlphaMask] Canvas texture created:', {
+    width: pixelWidth,
+    height: pixelHeight,
+    configured: true
+  })
+
   return texture
 }
 

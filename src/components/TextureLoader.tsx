@@ -16,6 +16,7 @@ class ConfiguredTextureLoader extends THREE.TextureLoader {
     onProgress?: (event: ProgressEvent) => void,
     onError?: (event: ErrorEvent) => void
   ): THREE.Texture {
+    console.log('[TextureLoader] Starting load:', url)
     const texture = new THREE.Texture()
 
     // Configure texture BEFORE loading image (Safari requires this)
@@ -26,6 +27,13 @@ class ConfiguredTextureLoader extends THREE.TextureLoader {
     texture.wrapT = THREE.ClampToEdgeWrapping
     texture.colorSpace = THREE.SRGBColorSpace
 
+    console.log('[TextureLoader] Texture configured:', {
+      url,
+      minFilter: 'LinearFilter',
+      magFilter: 'LinearFilter',
+      generateMipmaps: false
+    })
+
     const loader = new THREE.ImageLoader(this.manager)
     loader.setCrossOrigin(this.crossOrigin)
     loader.setPath(this.path)
@@ -33,14 +41,25 @@ class ConfiguredTextureLoader extends THREE.TextureLoader {
     loader.load(
       url,
       (image) => {
+        console.log('[TextureLoader] Image loaded successfully:', {
+          url,
+          width: image.width,
+          height: image.height,
+          complete: (image as HTMLImageElement).complete
+        })
+
         // Image is fully loaded - assign immediately
         texture.image = image
         texture.needsUpdate = true
 
+        console.log('[TextureLoader] Texture ready for rendering:', url)
         if (onLoad) onLoad(texture)
       },
       onProgress,
-      onError
+      (error) => {
+        console.error('[TextureLoader] Failed to load:', url, error)
+        if (onError) onError(error as ErrorEvent)
+      }
     )
 
     return texture
