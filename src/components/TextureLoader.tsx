@@ -1,5 +1,5 @@
 import { useLoader } from '@react-three/fiber'
-import { Suspense, useState, useEffect } from 'react'
+import { Suspense, useState } from 'react'
 import * as THREE from 'three'
 
 interface SafeTextureProps {

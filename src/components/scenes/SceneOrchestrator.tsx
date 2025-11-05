@@ -1,5 +1,5 @@
 import { useRef, useEffect, ReactNode } from 'react'
-import { useFrame, useThree } from '@react-three/fiber'
+import { useFrame } from '@react-three/fiber'
 import { useAppStore } from '../../store/useAppStore'
 import { WelcomeScene } from './WelcomeScene'
 import { CenteringScene } from './CenteringScene'

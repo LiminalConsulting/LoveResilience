@@ -21,9 +21,8 @@ const BreathingOrb = ({
 }) => {
   const meshRef = useRef<THREE.Mesh>(null)
   const materialRef = useRef<THREE.MeshStandardMaterial>(null)
-  const lastPhaseRef = useRef<'in' | 'out'>(breathPhase)
 
-  useFrame((state, delta) => {
+  useFrame(() => {
     if (meshRef.current && materialRef.current && isActive) {
       const phaseDuration = breathPhase === 'in' ? 4 : 7
       const elapsed = phaseDuration - breathCountdown
@@ -84,7 +83,7 @@ const CenteringText = ({ phase }: { phase: string }) => {
   )
 }
 
-export const CenteringScene = ({ phase, progress, breathPhase, breathCountdown }: CenteringSceneProps) => {
+export const CenteringScene = ({ phase, breathPhase, breathCountdown }: CenteringSceneProps) => {
   return (
     <>
       <BreathingOrb

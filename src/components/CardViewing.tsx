@@ -7,14 +7,12 @@ const CardContent = ({
   theme,
   meaning,
   questions,
-  actions,
-  quotes
+  actions
 }: {
   theme: string
   meaning?: string
   questions?: string[]
   actions?: string[]
-  quotes?: string[]
 }) => {
   const [currentSection, setCurrentSection] = useState<'meaning' | 'questions' | 'actions' | null>(null)
 
@@ -134,7 +132,6 @@ export const CardViewing = () => {
           meaning={selectedCard.meaning}
           questions={selectedCard.questions}
           actions={selectedCard.actions}
-          quotes={[quote]}
         />
 
         <div className="viewing-actions">

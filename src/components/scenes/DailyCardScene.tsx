@@ -35,7 +35,7 @@ const GoldenOrb = () => {
   )
 }
 
-export const DailyCardScene = ({ imagePath, theme }: DailyCardSceneProps) => {
+export const DailyCardScene = ({ imagePath }: DailyCardSceneProps) => {
   return (
     <>
       {/* Daily-specific lighting */}

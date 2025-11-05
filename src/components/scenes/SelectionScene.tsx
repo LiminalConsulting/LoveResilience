@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { Text } from '@react-three/drei'
 import { useAppStore } from '../../store/useAppStore'
@@ -8,7 +7,6 @@ import * as THREE from 'three'
 
 const FloatingCards = () => {
   const { shuffledCards, cardData, setSelectedCard, startTransition } = useAppStore()
-  const [hoveredCard, setHoveredCard] = useState<string | null>(null)
 
   if (!cardData) return null
 
@@ -37,8 +35,6 @@ const FloatingCards = () => {
         <group
           key={card.id}
           onClick={() => handleCardClick(card)}
-          onPointerEnter={() => setHoveredCard(card.id)}
-          onPointerLeave={() => setHoveredCard(null)}
         >
           <Card3D
             imagePath={cardData.backside}
