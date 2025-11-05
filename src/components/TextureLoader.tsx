@@ -8,7 +8,7 @@ interface SafeTextureProps {
   fallback?: React.ReactNode
 }
 
-// Custom texture loader that configures textures properly
+// Custom texture loader that configures textures properly for Safari
 class ConfiguredTextureLoader extends THREE.TextureLoader {
   load(
     url: string,
@@ -20,10 +20,20 @@ class ConfiguredTextureLoader extends THREE.TextureLoader {
       url,
       (loadedTexture) => {
         // Configure IMMEDIATELY on load, before any rendering
+        // Safari requires these to be set before the image is used
         loadedTexture.minFilter = THREE.LinearFilter
         loadedTexture.magFilter = THREE.LinearFilter
         loadedTexture.generateMipmaps = false
+        loadedTexture.wrapS = THREE.ClampToEdgeWrapping
+        loadedTexture.wrapT = THREE.ClampToEdgeWrapping
+        loadedTexture.format = THREE.RGBAFormat
+        loadedTexture.type = THREE.UnsignedByteType
         loadedTexture.needsUpdate = true
+
+        // Force immediate texture update
+        if (loadedTexture.image) {
+          loadedTexture.image.onload = null // Prevent duplicate processing
+        }
 
         if (onLoad) onLoad(loadedTexture)
       },
@@ -31,10 +41,14 @@ class ConfiguredTextureLoader extends THREE.TextureLoader {
       onError
     )
 
-    // Also configure the initial texture object
+    // Also configure the initial texture object before image loads
     texture.minFilter = THREE.LinearFilter
     texture.magFilter = THREE.LinearFilter
     texture.generateMipmaps = false
+    texture.wrapS = THREE.ClampToEdgeWrapping
+    texture.wrapT = THREE.ClampToEdgeWrapping
+    texture.format = THREE.RGBAFormat
+    texture.type = THREE.UnsignedByteType
 
     return texture
   }
