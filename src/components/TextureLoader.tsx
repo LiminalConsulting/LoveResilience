@@ -48,8 +48,34 @@ class ConfiguredTextureLoader extends THREE.TextureLoader {
           complete: (image as HTMLImageElement).complete
         })
 
-        // Image is fully loaded - assign immediately
-        texture.image = image
+        // Resize large images for Safari compatibility
+        const maxDimension = 2048 // Safe size for Safari WebGL
+        let finalImage: HTMLImageElement | HTMLCanvasElement = image
+
+        if (image.width > maxDimension || image.height > maxDimension) {
+          console.warn('[TextureLoader] ⚠️ Image too large for Safari, resizing...', {
+            original: { width: image.width, height: image.height },
+            maxDimension
+          })
+
+          // Calculate new dimensions maintaining aspect ratio
+          const scale = Math.min(maxDimension / image.width, maxDimension / image.height)
+          const newWidth = Math.floor(image.width * scale)
+          const newHeight = Math.floor(image.height * scale)
+
+          // Create canvas and resize
+          const canvas = document.createElement('canvas')
+          canvas.width = newWidth
+          canvas.height = newHeight
+          const ctx = canvas.getContext('2d')!
+          ctx.drawImage(image, 0, 0, newWidth, newHeight)
+
+          finalImage = canvas
+          console.log('[TextureLoader] ✅ Image resized to:', { width: newWidth, height: newHeight })
+        }
+
+        // Image is ready - assign
+        texture.image = finalImage
         texture.needsUpdate = true
 
         console.log('[TextureLoader] Texture ready for rendering:', url)
