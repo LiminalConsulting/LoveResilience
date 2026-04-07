@@ -52,6 +52,7 @@ const BreathingOrb = ({
           <meshBasicMaterial
             ref={materialRef}
             map={texture}
+            color="#d4af37"
             transparent
             opacity={0.5}
             depthWrite={false}

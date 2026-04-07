@@ -15,6 +15,7 @@ const GoldenOrb = () => {
           <planeGeometry args={[4, 4]} />
           <meshBasicMaterial
             map={texture}
+            color="#d4af37"
             transparent
             opacity={0.85}
             depthWrite={false}

@@ -10,6 +10,7 @@ const FloatingOrb = () => {
             <planeGeometry args={[2.2, 2.2]} />
             <meshBasicMaterial
               map={texture}
+              color="#d4af37"
               transparent
               opacity={0.9}
               depthWrite={false}
