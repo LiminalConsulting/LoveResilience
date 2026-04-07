@@ -33,22 +33,25 @@ welcome → daily card
 ## Key Architecture Decisions
 
 ### Single persistent Canvas
-`UnifiedCanvas` → `SceneOrchestrator` renders all scenes. Cross-fade transitions between states. `SelectionScene` is always mounted (even when not active) so cards are never cold-loaded.
+`UnifiedCanvas` → `SceneOrchestrator` renders all scenes. Cross-fade transitions between states. `SelectionScene` is **always mounted** (even when not active) so cards are never cold-loaded. When inactive, all cards are faded to opacity=0.
+
+### SelectionScene always-mounted pattern
+`SceneOrchestrator` renders `<SelectionScene active={selectionActive} />` unconditionally. Other scenes (welcome, centering, daily) mount/unmount normally with cross-fade. This keeps the card pool warm at all times.
 
 ### All text is HTML overlay, not 3D
 Every scene has a matching HTML overlay component for text/buttons. Three.js canvas contains only 3D geometry (cards, orb). This keeps mobile layout clean and CSS animations simple.
 
 ### Card pool (object pooling)
-`SelectionScene` maintains 12 fixed slots (`slot-0` through `slot-11`) with stable React keys. Cards never unmount — only their `frontPath`/`backPath` props change on shuffle. This prevents texture reload jank.
+`SelectionScene` maintains 12 fixed slots (`slot-0` through `slot-11`) with stable React keys. Cards **never unmount** — only their `frontPath`/`backPath` props change on shuffle. Springs animate from current position to new target. No texture reload jank.
 
 ### Card3D — single spring for everything
-`src/components/scenes/Card3D.tsx` — one `useSpring` drives x/y/z position, scale, rotationY (flip), opacity, and hover lift. Props: `targetPosition`, `targetOpacity`, `targetScale`, `flipped`, `interactive`.
+`src/components/scenes/Card3D.tsx` — one `useSpring` drives x/y/z position, scale, rotationY (flip), opacity, and hover lift. Props: `targetPosition`, `targetOpacity`, `targetScale`, `flipped`, `interactive`. Two meshes (front + back) on one group — group rotates to flip.
 
 ### Orb — shared component
 `src/components/scenes/OrbMesh.tsx` — uses `Orb.png` (golden circle extracted from card backside). Radial alpha mask fades to transparent at 95% radius. Used in WelcomeScene (float), CenteringScene (breathes with user), DailyCardScene (behind card).
 
 ### Card content from markdown
-`src/data/cardLoader.ts` uses `import.meta.glob('/card-content/*.md', { query: '?raw' })` to parse all 70 card markdown files at build time. Extracts `# Meaning`, `# Question`, `# Action` sections. No runtime fetching.
+`src/data/cardLoader.ts` uses `import.meta.glob('/card-content/*.md', { query: '?raw', import: 'default', eager: true })` to parse all 70 card markdown files at build time. Extracts `# Meaning`, `# Question`, `# Action` sections. No runtime fetching.
 
 ---
 
@@ -66,6 +69,8 @@ Shuffle timing: 900ms wait (cards reach deck) → swap card data in slots → do
 
 Focus scale is responsive: `aspect >= 1 ? 1.25 : 3.0` (desktop/landscape vs portrait/mobile).
 
+Camera z is responsive: `aspect >= 1 ? 8 : Math.min(8 / aspect, 16)`.
+
 ---
 
 ## File Structure
@@ -80,11 +85,11 @@ src/
     TextureLoader.tsx              — SafeTexture component (Safari WebGL fixes, image resize)
     UnifiedCanvas.tsx              — full-screen Three.js canvas wrapper (100dvh)
     scenes/
-      SceneOrchestrator.tsx        — renders correct scene, cross-fade transitions
-      WelcomeScene.tsx             — floating orb
-      CenteringScene.tsx           — breathing orb (scales with breath phase)
+      SceneOrchestrator.tsx        — always mounts SelectionScene; cross-fades other scenes
+      WelcomeScene.tsx             — floating orb (OrbMesh with float=true)
+      CenteringScene.tsx           — breathing orb (OrbMesh with breathPhase prop)
       SelectionScene.tsx           — 12-card pool, mode state machine, camera controller
-      DailyCardScene.tsx           — single card + orb behind it
+      DailyCardScene.tsx           — single card (flipped=true) + orb behind it
       Card3D.tsx                   — two-face card mesh, single spring animation
       OrbMesh.tsx                  — shared orb: Orb.png + radial alpha fade + optional float/breath
   store/
@@ -117,15 +122,6 @@ triggerShuffle: (() => void) | null // set by SelectionScene, called by CardSele
 centeringPhase: 'check' | 'breathe' | 'intention' | 'ready'
 breathPhase: 'in' | 'out'
 ```
-
----
-
-## Known Issues / Next Up
-1. **Spawn/shuffle jank** — object pooling (stable slot keys) mostly solves this, but texture swap on shuffle still causes a brief flash. Next step: keep `SelectionScene` always-mounted in `SceneOrchestrator` (currently it unmounts when state changes away from `selection`), and pre-warm textures on welcome screen.
-2. **Focus scale** — responsive (`1.25` landscape / `3.0` portrait) but may need further tuning per device.
-3. **Centering flow** — after 3 breaths, "Set your intention" fades in/out over 7s, then "You are centered and ready" over 4s, then auto-navigates to selection.
-4. **Daily card** — "Explore Deeper" button navigates to `selection` (not a separate viewing scene — viewing was removed).
-5. **Questions** — each card now has its real question from the markdown files (not generic). Only the first question is shown below the focused card.
 
 ---
 
