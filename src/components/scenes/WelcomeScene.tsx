@@ -12,6 +12,7 @@ const FloatingOrb = () => {
             <orbShaderMaterial
               map={texture}
               opacity={0.9}
+              tintStrength={0.0}
               transparent
               depthWrite={false}
             />
