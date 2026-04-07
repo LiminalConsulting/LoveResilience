@@ -12,7 +12,11 @@ export const CardSelection = () => {
 
   return (
     <div className="selection-container">
-      {/* Instructions are in 3D scene - SelectionScene.tsx */}
+
+      <div className="selection-header">
+        <h2 className="selection-title">Trust Your Intuition</h2>
+        <p className="selection-instruction">Feel into the cards and choose the one that calls to you</p>
+      </div>
 
       <div className="selection-actions">
         <button
@@ -38,6 +42,31 @@ export const CardSelection = () => {
           width: 100vw;
           height: 100vh;
           pointer-events: none;
+        }
+
+        .selection-header {
+          position: absolute;
+          top: 5%;
+          left: 50%;
+          transform: translateX(-50%);
+          text-align: center;
+          pointer-events: none;
+          white-space: nowrap;
+        }
+
+        .selection-title {
+          font-size: clamp(1.2rem, 3vw, 1.8rem);
+          color: #5a5a5a;
+          font-weight: 300;
+          letter-spacing: 0.05em;
+          margin: 0 0 0.4rem;
+        }
+
+        .selection-instruction {
+          font-size: clamp(0.75rem, 1.8vw, 0.95rem);
+          color: #7a7a7a;
+          font-style: italic;
+          margin: 0;
         }
 
         .selection-actions {

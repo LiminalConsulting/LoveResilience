@@ -1,5 +1,4 @@
 import { useFrame, useThree } from '@react-three/fiber'
-import { Text } from '@react-three/drei'
 import { useAppStore } from '../../store/useAppStore'
 import { Card } from '../../types/Card'
 import { Card3D } from './Card3D'
@@ -71,49 +70,6 @@ export const SelectionScene = () => {
 
       <CameraController />
       <FloatingCards />
-
-      <Text
-        position={[0, 4.2, 0]}
-        fontSize={0.5}
-        color="#5a5a5a"
-        anchorX="center"
-        anchorY="middle"
-      >
-        Trust Your Intuition
-      </Text>
-
-      <Text
-        position={[0, 3.6, 0]}
-        fontSize={0.3}
-        color="#7a7a7a"
-        anchorX="center"
-        anchorY="middle"
-      >
-        Take a deep breath
-      </Text>
-
-      <Text
-        position={[0, 3.1, 0]}
-        fontSize={0.3}
-        color="#7a7a7a"
-        anchorX="center"
-        anchorY="middle"
-      >
-        In and out
-      </Text>
-
-      <Text
-        position={[0, 2.4, 0]}
-        fontSize={0.32}
-        color="#6a6a6a"
-        anchorX="center"
-        anchorY="middle"
-        maxWidth={8}
-        textAlign="center"
-        fontStyle="italic"
-      >
-        Feel into the cards and choose the one that calls to you
-      </Text>
     </>
   )
 }
