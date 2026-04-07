@@ -1,8 +1,10 @@
 import { create } from 'zustand'
 import { Card, CardData, AppState } from '../types/Card'
+import type { Language } from '../data/cardLoader'
 
 interface AppStore {
   // State
+  language: Language
   currentState: AppState
   previousState: AppState | null
   isTransitioning: boolean
@@ -18,6 +20,7 @@ interface AppStore {
   breathCountdown: number
 
   // Actions
+  setLanguage: (lang: Language) => void
   setState: (state: AppState) => void
   startTransition: (toState: AppState) => void
   setTransitionProgress: (progress: number) => void
@@ -61,6 +64,7 @@ const getDailyCardId = (): string => {
 }
 
 export const useAppStore = create<AppStore>((set, get) => ({
+  language: (localStorage.getItem('loveResilience_lang') as Language) ?? 'en',
   currentState: 'welcome',
   previousState: null,
   isTransitioning: false,
@@ -75,6 +79,29 @@ export const useAppStore = create<AppStore>((set, get) => ({
   breathPhase: 'in',
   breathCountdown: 4,
   triggerShuffle: null,
+
+  setLanguage: (lang) => {
+    localStorage.setItem('loveResilience_lang', lang)
+    const { cardData, selectedCard, dailyCard } = get()
+
+    // Patch image paths in-place — preserve all scene state (focused card, mode, etc.)
+    const patchPath = (path: string) =>
+      path.replace(/\/CardSet\/(en|de)\//, `/CardSet/${lang}/`)
+
+    const patchCard = (card: Card): Card => ({ ...card, imagePath: patchPath(card.imagePath) })
+
+    const newCardData = cardData ? {
+      ...cardData,
+      cards: cardData.cards.map(patchCard),
+    } : null
+
+    set({
+      language: lang,
+      cardData: newCardData,
+      selectedCard: selectedCard ? patchCard(selectedCard) : null,
+      dailyCard: dailyCard ? patchCard(dailyCard) : null,
+    })
+  },
 
   setState: (state) => set({ currentState: state }),
 
@@ -128,13 +155,17 @@ export const useAppStore = create<AppStore>((set, get) => ({
   getDailyCard: () => {
     const { cardData, dailyCard } = get()
     if (!cardData || cardData.cards.length === 0) return null
-    
-    if (dailyCard) return dailyCard
-    
+
+    if (dailyCard) {
+      // Always sync selectedCard in case it was cleared by reset()
+      set({ selectedCard: dailyCard })
+      return dailyCard
+    }
+
     const dailyCardId = getDailyCardId()
     const cardIndex = parseInt(dailyCardId) % cardData.cards.length
     const card = cardData.cards[cardIndex]
-    
+
     set({ dailyCard: card, selectedCard: card })
     return card
   },

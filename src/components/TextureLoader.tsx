@@ -1,5 +1,5 @@
 import { useLoader } from '@react-three/fiber'
-import { Suspense, useState, useEffect } from 'react'
+import { Suspense, useState } from 'react'
 import * as THREE from 'three'
 
 interface SafeTextureProps {
@@ -48,12 +48,12 @@ class ConfiguredTextureLoader extends THREE.TextureLoader {
           complete: (image as HTMLImageElement).complete
         })
 
-        // Resize large images for Safari compatibility
-        const maxDimension = 2048 // Safe size for Safari WebGL
+        // Resize large images — keeps GPU memory manageable for 12 simultaneous textures
+        const maxDimension = 1024
         let finalImage: HTMLImageElement | HTMLCanvasElement = image
 
         if (image.width > maxDimension || image.height > maxDimension) {
-          console.warn('[TextureLoader] ⚠️ Image too large for Safari, resizing...', {
+          console.warn('[TextureLoader] ⚠️ Image too large, resizing...', {
             original: { width: image.width, height: image.height },
             maxDimension
           })
