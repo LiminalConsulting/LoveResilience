@@ -5,10 +5,8 @@ import { WelcomeScene } from './WelcomeScene'
 import { CenteringScene } from './CenteringScene'
 import { SelectionScene } from './SelectionScene'
 import { DailyCardScene } from './DailyCardScene'
-import { ViewingScene } from './ViewingScene'
 import * as THREE from 'three'
 
-// Component to fade a scene by adjusting material opacity
 const FadedGroup = ({ children, opacity }: { children: ReactNode; opacity: number }) => {
   const groupRef = useRef<THREE.Group>(null)
 
@@ -35,14 +33,6 @@ const FadedGroup = ({ children, opacity }: { children: ReactNode; opacity: numbe
   return <group ref={groupRef}>{children}</group>
 }
 
-/**
- * SceneOrchestrator manages smooth transitions between app states
- *
- * Instead of instant scene switches, it:
- * - Renders both previous and current scenes during transitions
- * - Animates opacity/position/scale for smooth visual flow
- * - Drives transition progress via useFrame
- */
 export const SceneOrchestrator = () => {
   const currentState = useAppStore(state => state.currentState)
   const previousState = useAppStore(state => state.previousState)
@@ -57,30 +47,23 @@ export const SceneOrchestrator = () => {
   const selectedCard = useAppStore(state => state.selectedCard)
 
   const transitionStartTime = useRef<number>(0)
-  const transitionDuration = 1000 // 1 second transition
+  const transitionDuration = 1000
 
-  // Start transition timer when isTransitioning becomes true
   useEffect(() => {
     if (isTransitioning) {
       transitionStartTime.current = Date.now()
     }
   }, [isTransitioning])
 
-  // Drive transition progress
   useFrame(() => {
     if (isTransitioning) {
       const elapsed = Date.now() - transitionStartTime.current
       const progress = Math.min(elapsed / transitionDuration, 1)
-
       setTransitionProgress(progress)
-
-      if (progress >= 1) {
-        completeTransition()
-      }
+      if (progress >= 1) completeTransition()
     }
   })
 
-  // Helper to get scene content
   const getSceneContent = (state: string) => {
     switch (state) {
       case 'welcome':
@@ -94,30 +77,22 @@ export const SceneOrchestrator = () => {
       case 'selection':
         return <SelectionScene />
       case 'daily':
-        return selectedCard ? (
-          <DailyCardScene imagePath={selectedCard.imagePath} theme={selectedCard.theme} />
-        ) : null
-      case 'viewing':
-        return selectedCard ? <ViewingScene imagePath={selectedCard.imagePath} /> : null
+        return selectedCard
+          ? <DailyCardScene imagePath={selectedCard.imagePath} theme={selectedCard.theme} />
+          : null
       default:
         return null
     }
   }
 
-  // During transition: render both scenes with cross-fade
   if (isTransitioning && previousState) {
     return (
       <>
-        {/* Lights */}
         <ambientLight intensity={0.6} />
         <pointLight position={[10, 10, 10]} intensity={0.8} />
-
-        {/* Previous scene fading out */}
         <FadedGroup opacity={1 - transitionProgress}>
           {getSceneContent(previousState)}
         </FadedGroup>
-
-        {/* Current scene fading in */}
         <FadedGroup opacity={transitionProgress}>
           {getSceneContent(currentState)}
         </FadedGroup>
@@ -125,14 +100,10 @@ export const SceneOrchestrator = () => {
     )
   }
 
-  // Normal rendering: single scene at full opacity
   return (
     <>
-      {/* Lights */}
       <ambientLight intensity={0.6} />
       <pointLight position={[10, 10, 10]} intensity={0.8} />
-
-      {/* Current scene */}
       {currentState === 'welcome' && <WelcomeScene />}
       {currentState === 'centering' && (
         <CenteringScene
@@ -144,9 +115,6 @@ export const SceneOrchestrator = () => {
       {currentState === 'selection' && <SelectionScene />}
       {currentState === 'daily' && selectedCard && (
         <DailyCardScene imagePath={selectedCard.imagePath} theme={selectedCard.theme} />
-      )}
-      {currentState === 'viewing' && selectedCard && (
-        <ViewingScene imagePath={selectedCard.imagePath} />
       )}
     </>
   )

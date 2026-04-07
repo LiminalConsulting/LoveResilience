@@ -53,7 +53,7 @@ export const DailyCard = () => {
         <div className="daily-actions">
           <button
             className="action-button primary"
-            onClick={() => setState('viewing')}
+            onClick={() => setState('selection')}
           >
             Explore Deeper
           </button>

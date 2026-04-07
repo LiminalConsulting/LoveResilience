@@ -1,46 +1,72 @@
 import { useEffect } from 'react'
 import { useAppStore } from '../store/useAppStore'
 
-// 3D scene moved to SelectionScene in UnifiedCanvas
-
 export const CardSelection = () => {
-  const { shuffleCards, setState } = useAppStore()
+  const { shuffleCards, setState, selectedCard, focusedCardId, setSelectedCard, setFocusedCardId, reset } = useAppStore()
 
   useEffect(() => {
     shuffleCards()
   }, [shuffleCards])
 
+  const isFocused = !!focusedCardId
+  const question = selectedCard?.questions?.[0] ?? null
+
+  const handleDrawAnother = () => {
+    setSelectedCard(null)
+    setFocusedCardId(null)
+    shuffleCards()
+  }
+
+  const handleReturnHome = () => {
+    setFocusedCardId(null)
+    reset()
+    setState('welcome')
+  }
+
   return (
     <div className="selection-container">
 
-      <div className="selection-header">
-        <h2 className="selection-title">Trust Your Intuition</h2>
-        <p className="selection-instruction">Feel into the cards and choose the one that calls to you</p>
-      </div>
+      {!isFocused && (
+        <div className="selection-header">
+          <h2 className="selection-title">Trust Your Intuition</h2>
+          <p className="selection-instruction">Feel into the cards and choose the one that calls to you</p>
+        </div>
+      )}
+
+      {isFocused && question && (
+        <div className="card-question">
+          <p className="question-text">{question}</p>
+        </div>
+      )}
 
       <div className="selection-actions">
-        <button
-          className="action-button secondary"
-          onClick={shuffleCards}
-        >
-          Shuffle Cards
-        </button>
+        {!isFocused && (
+          <button className="action-button secondary" onClick={shuffleCards}>
+            Shuffle Cards
+          </button>
+        )}
+
+        {isFocused && (
+          <button className="action-button secondary" onClick={handleDrawAnother}>
+            Draw Another
+          </button>
+        )}
 
         <button
           className="action-button secondary"
-          onClick={() => setState('welcome')}
+          onClick={isFocused ? handleReturnHome : () => setState('welcome')}
         >
-          Back to Welcome
+          {isFocused ? 'Return Home' : 'Back to Welcome'}
         </button>
       </div>
-      
+
       <style>{`
         .selection-container {
           position: fixed;
           top: 0;
           left: 0;
           width: 100vw;
-          height: 100vh;
+          height: 100dvh;
           pointer-events: none;
         }
 
@@ -69,6 +95,31 @@ export const CardSelection = () => {
           margin: 0;
         }
 
+        .card-question {
+          position: absolute;
+          bottom: 18%;
+          left: 50%;
+          transform: translateX(-50%);
+          text-align: center;
+          max-width: min(600px, 85vw);
+          pointer-events: none;
+          animation: fadeIn 0.8s ease forwards;
+        }
+
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+          to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        .question-text {
+          font-size: clamp(1rem, 2.5vw, 1.3rem);
+          color: #5a5a5a;
+          font-weight: 300;
+          font-style: italic;
+          line-height: 1.6;
+          margin: 0;
+        }
+
         .selection-actions {
           position: absolute;
           bottom: 5%;
@@ -79,7 +130,7 @@ export const CardSelection = () => {
           align-items: center;
           pointer-events: auto;
         }
-        
+
         .action-button {
           padding: 0.8rem 1.5rem;
           border: none;
@@ -89,26 +140,28 @@ export const CardSelection = () => {
           cursor: pointer;
           transition: all 0.3s ease;
         }
-        
+
         .action-button.secondary {
           background: rgba(255, 255, 255, 0.9);
           color: #5a5a5a;
           border: 2px solid #d4af37;
         }
-        
+
         .action-button.secondary:hover {
           background: rgba(212, 175, 55, 0.1);
           transform: translateY(-2px);
         }
-        
+
         @media (max-width: 768px) {
           .selection-actions {
             flex-direction: column;
-            bottom: 8%;
+            bottom: 6%;
+            gap: 0.6rem;
           }
-          
+
           .action-button {
-            min-width: 150px;
+            min-width: 160px;
+            text-align: center;
           }
         }
       `}</style>

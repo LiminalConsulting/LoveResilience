@@ -1,25 +1,25 @@
-import { useRef, useState, useMemo } from 'react'
-import { useFrame, useThree } from '@react-three/fiber'
-import { Float } from '@react-three/drei'
+import { useRef, useMemo, useState } from 'react'
+import { useFrame } from '@react-three/fiber'
 import { useSpring, a } from '@react-spring/three'
 import { SafeTexture } from '../TextureLoader'
 import * as THREE from 'three'
 
 interface Card3DProps {
-  imagePath: string
+  frontPath: string
+  backPath: string
   size?: [number, number]
-  flipAnimation?: boolean
-  floatAnimation?: boolean
-  pulseAnimation?: boolean
   position?: [number, number, number]
+  // Grid behaviour
   interactive?: boolean
-  hoverLift?: boolean
+  // Focus behaviour
+  selected?: boolean
+  faded?: boolean
+  focusPosition?: [number, number, number]
+  focusScale?: number
+  onClick?: () => void
 }
 
-// Create rounded corner alpha mask using canvas
 const createRoundedMask = (width: number, height: number, radius: number) => {
-  console.log('[AlphaMask] Creating rounded mask:', { width, height, radius })
-
   const canvas = document.createElement('canvas')
   const pixelWidth = 512
   const pixelHeight = Math.round(pixelWidth * (height / width))
@@ -29,11 +29,8 @@ const createRoundedMask = (width: number, height: number, radius: number) => {
   const ctx = canvas.getContext('2d')!
   ctx.fillStyle = 'black'
   ctx.fillRect(0, 0, pixelWidth, pixelHeight)
-
-  // Draw rounded rectangle in white
   ctx.fillStyle = 'white'
   const r = radius * pixelWidth / width
-
   ctx.beginPath()
   ctx.moveTo(r, 0)
   ctx.lineTo(pixelWidth - r, 0)
@@ -48,144 +45,107 @@ const createRoundedMask = (width: number, height: number, radius: number) => {
   ctx.fill()
 
   const texture = new THREE.CanvasTexture(canvas)
-  // Configure for non-power-of-2 dimensions (Safari compatibility)
   texture.minFilter = THREE.LinearFilter
   texture.magFilter = THREE.LinearFilter
   texture.generateMipmaps = false
   texture.wrapS = THREE.ClampToEdgeWrapping
   texture.wrapT = THREE.ClampToEdgeWrapping
-  texture.format = THREE.RGBAFormat
-  texture.type = THREE.UnsignedByteType
   texture.needsUpdate = true
-
-  console.log('[AlphaMask] Canvas texture created:', {
-    width: pixelWidth,
-    height: pixelHeight,
-    configured: true
-  })
-
   return texture
 }
 
 export const Card3D = ({
-  imagePath,
-  size = [2.5, 3.8],
-  flipAnimation = true,
-  floatAnimation = true,
-  pulseAnimation = false,
+  frontPath,
+  backPath,
+  size = [1.2, 1.8],
   position = [0, 0, 0],
   interactive = false,
-  hoverLift = false
+  selected = false,
+  faded = false,
+  focusPosition = [0, 0, 2],
+  focusScale = 2.2,
+  onClick,
 }: Card3DProps) => {
-  const meshRef = useRef<THREE.Mesh>(null)
   const groupRef = useRef<THREE.Group>(null)
-  const [isHovered, setIsHovered] = useState(false)
-  const { pointer } = useThree()
-  const targetRotation = useRef({ x: 0, y: 0 })
-
-  // Create alpha mask for rounded corners
+  const frontRef = useRef<THREE.Mesh>(null)
+  const backRef = useRef<THREE.Mesh>(null)
   const alphaMask = useMemo(() => createRoundedMask(size[0], size[1], 0.1), [size])
 
-  // Flip animation (card reveal)
-  const { rotationY } = useSpring({
-    from: { rotationY: flipAnimation ? Math.PI : 0 },
-    to: { rotationY: 0 },
-    config: { tension: 200, friction: 50 }
+  // Flip: back (0) in grid, front (π) when selected
+  const { rotationY, posX, posY, posZ, cardScale, opacity } = useSpring({
+    rotationY: selected ? Math.PI : 0,
+    posX: selected ? focusPosition[0] : position[0],
+    posY: selected ? focusPosition[1] : position[1],
+    posZ: selected ? focusPosition[2] : position[2],
+    cardScale: selected ? focusScale : 1,
+    opacity: faded ? 0 : 1,
+    config: {
+      tension: selected ? 180 : 220,
+      friction: selected ? 60 : 50,
+    },
   })
 
-  // Scale animation (daily card entrance)
-  const { scale } = useSpring({
-    from: { scale: flipAnimation ? 0 : 1 },
-    to: { scale: 1 },
-    config: { tension: 200, friction: 60 }
+  // Gentle hover lift (only in grid mode)
+  const [hovered, setHovered] = useState(false)
+  const { hoverZ } = useSpring({
+    hoverZ: interactive && !selected && hovered ? 0.3 : 0,
+    config: { tension: 280, friction: 40 },
   })
 
-  // Hover lift animation
-  const { posZ } = useSpring({
-    posZ: interactive && hoverLift && isHovered ? 0.3 : 0,
-    config: { tension: 280, friction: 40 }
-  })
-
-  // Gentle floating/pulse animation + interactive tilt
-  useFrame((state) => {
-    if (meshRef.current) {
-      // Floating/pulse animation
-      if (pulseAnimation) {
-        // Gentle breathing pulse
-        meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.3) * 0.1
-      } else if (floatAnimation && !interactive) {
-        // Subtle floating (disabled during interactive mode to avoid conflict)
-        meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.5) * 0.1
-      }
+  // Sync opacity to materials each frame
+  useFrame(() => {
+    const op = opacity.get()
+    if (frontRef.current) {
+      const mat = frontRef.current.material as THREE.MeshBasicMaterial
+      mat.opacity = op
     }
-
-    // Interactive tilt toward cursor (on group, not mesh, to avoid conflict with flip animation)
-    if (groupRef.current && interactive) {
-      if (isHovered) {
-        const cardWorldPos = new THREE.Vector3(...position)
-        const dx = pointer.x * 5 - cardWorldPos.x
-        const dy = pointer.y * 3 - cardWorldPos.y
-
-        // Very subtle tilt (max 0.15 radians = ~8.5 degrees)
-        targetRotation.current.x = THREE.MathUtils.clamp(-dy * 0.08, -0.15, 0.15)
-        targetRotation.current.y = THREE.MathUtils.clamp(dx * 0.08, -0.15, 0.15)
-      } else {
-        // Return to neutral
-        targetRotation.current.x = 0
-        targetRotation.current.y = 0
-      }
-
-      // Smooth interpolation
-      groupRef.current.rotation.x = THREE.MathUtils.lerp(
-        groupRef.current.rotation.x,
-        targetRotation.current.x,
-        0.1
-      )
-      groupRef.current.rotation.y = THREE.MathUtils.lerp(
-        groupRef.current.rotation.y,
-        targetRotation.current.y,
-        0.1
-      )
+    if (backRef.current) {
+      const mat = backRef.current.material as THREE.MeshBasicMaterial
+      mat.opacity = op
     }
   })
 
-  const CardMesh = (
-    <SafeTexture url={imagePath}>
-      {(texture) => (
-        <a.group
-          ref={groupRef}
-          position-x={position[0]}
-          position-y={position[1]}
-          position-z={interactive && hoverLift ? posZ : position[2]}
-        >
-          <a.mesh
-            ref={meshRef}
-            rotation-y={rotationY}
-            scale={scale}
-            onPointerEnter={() => interactive && setIsHovered(true)}
-            onPointerLeave={() => interactive && setIsHovered(false)}
-          >
-            <planeGeometry args={[size[0], size[1]]} />
-            <meshBasicMaterial
-              map={texture}
-              alphaMap={alphaMask}
-              transparent
-              side={THREE.DoubleSide}
-            />
-          </a.mesh>
-        </a.group>
+  return (
+    <SafeTexture url={backPath}>
+      {(backTexture) => (
+        <SafeTexture url={frontPath}>
+          {(frontTexture) => (
+            <a.group
+              ref={groupRef}
+              position-x={posX}
+              position-y={posY}
+              position-z={posZ.to((z) => z + hoverZ.get())}
+              scale={cardScale}
+              rotation-y={rotationY}
+              onClick={interactive || selected ? onClick : undefined}
+              onPointerEnter={() => interactive && !selected && setHovered(true)}
+              onPointerLeave={() => setHovered(false)}
+            >
+              {/* Back face — visible in grid (rotationY=0, back faces camera) */}
+              <mesh ref={backRef}>
+                <planeGeometry args={[size[0], size[1]]} />
+                <meshBasicMaterial
+                  map={backTexture}
+                  alphaMap={alphaMask}
+                  transparent
+                  side={THREE.FrontSide}
+                />
+              </mesh>
+
+              {/* Front face — visible when selected (rotationY=π, front faces camera) */}
+              <mesh ref={frontRef} rotation-y={Math.PI}>
+                <planeGeometry args={[size[0], size[1]]} />
+                <meshBasicMaterial
+                  map={frontTexture}
+                  alphaMap={alphaMask}
+                  transparent
+                  side={THREE.FrontSide}
+                />
+              </mesh>
+            </a.group>
+          )}
+        </SafeTexture>
       )}
     </SafeTexture>
   )
-
-  // Wrap in Float component if enabled
-  if (floatAnimation && !interactive) {
-    return (
-      <Float speed={1} rotationIntensity={0.1} floatIntensity={0.2}>
-        {CardMesh}
-      </Float>
-    )
-  }
-
-  return CardMesh
 }

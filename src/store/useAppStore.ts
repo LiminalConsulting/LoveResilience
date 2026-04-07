@@ -9,6 +9,7 @@ interface AppStore {
   transitionProgress: number
   cardData: CardData | null
   selectedCard: Card | null
+  focusedCardId: string | null
   shuffledCards: Card[]
   dailyCard: Card | null
   centeringProgress: number
@@ -23,6 +24,7 @@ interface AppStore {
   completeTransition: () => void
   setCardData: (data: CardData) => void
   setSelectedCard: (card: Card | null) => void
+  setFocusedCardId: (id: string | null) => void
   shuffleCards: () => void
   selectRandomCard: () => Card | null
   getDailyCard: () => Card | null
@@ -64,6 +66,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
   transitionProgress: 0,
   cardData: null,
   selectedCard: null,
+  focusedCardId: null,
   shuffledCards: [],
   dailyCard: null,
   centeringProgress: 0,
@@ -99,6 +102,8 @@ export const useAppStore = create<AppStore>((set, get) => ({
   },
   
   setSelectedCard: (card) => set({ selectedCard: card }),
+
+  setFocusedCardId: (id) => set({ focusedCardId: id }),
   
   shuffleCards: () => {
     const { cardData } = get()
@@ -143,6 +148,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
   reset: () => set({
     currentState: 'welcome',
     selectedCard: null,
+    focusedCardId: null,
     centeringProgress: 0,
     centeringPhase: 'check'
   })

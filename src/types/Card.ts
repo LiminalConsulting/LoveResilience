@@ -15,7 +15,7 @@ export interface CardData {
   cover: string
 }
 
-export type AppState = 'welcome' | 'centering' | 'selection' | 'viewing' | 'daily'
+export type AppState = 'welcome' | 'centering' | 'selection' | 'daily'
 
 export interface Position {
   x: number

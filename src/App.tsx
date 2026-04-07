@@ -5,7 +5,6 @@ import { UnifiedCanvas } from './components/UnifiedCanvas'
 import { Welcome } from './components/Welcome'
 import { Centering } from './components/Centering'
 import { CardSelection } from './components/CardSelection'
-import { CardViewing } from './components/CardViewing'
 import { DailyCard } from './components/DailyCard'
 
 const LoadingScreen = () => (
@@ -85,7 +84,6 @@ function App() {
         {currentState === 'welcome' && <Welcome />}
         {currentState === 'centering' && <Centering />}
         {currentState === 'selection' && <CardSelection />}
-        {currentState === 'viewing' && <CardViewing />}
         {currentState === 'daily' && <DailyCard />}
       </Suspense>
       
