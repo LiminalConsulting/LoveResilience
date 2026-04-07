@@ -1,250 +1,149 @@
 import { useEffect } from 'react'
 import { useAppStore } from '../store/useAppStore'
 
-// 3D scene moved to DailyCardScene in UnifiedCanvas
-
 export const DailyCard = () => {
-  const { getDailyCard, selectedCard, setState } = useAppStore()
-  
+  const { getDailyCard, selectedCard, setState, reset } = useAppStore()
+
   useEffect(() => {
     getDailyCard()
   }, [getDailyCard])
-  
-  if (!selectedCard) {
-    return (
-      <div className="daily-loading">
-        <p>Preparing your daily card...</p>
-      </div>
-    )
-  }
-  
+
+  if (!selectedCard) return null
+
   const currentDate = new Date().toLocaleDateString('en-US', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
-    day: 'numeric'
+    day: 'numeric',
   })
-  
+
+  const question = selectedCard.questions?.[0] ?? null
+
   return (
     <div className="daily-container">
-      {/* Left side - empty space for 3D card from DailyCardScene */}
-      <div className="card-spacer"></div>
 
-      {/* Right side - content panel */}
-      <div className="content-panel">
-        <div className="daily-header">
-          <h1 className="daily-title">Your Card for Today</h1>
-          <p className="daily-date">{currentDate}</p>
-          <h2 className="card-theme">{selectedCard.theme}</h2>
-        </div>
-
-        <div className="daily-messages">
-          <div className="daily-message">
-            <h3>Today's Message</h3>
-            <p>{selectedCard.meaning || 'Let the energy of this card guide your day.'}</p>
-          </div>
-
-          <div className="daily-intention">
-            <h3>Intention for Today</h3>
-            <p>How might you embody the energy of <strong>{selectedCard.theme}</strong> in your day?</p>
-          </div>
-        </div>
-
-        <div className="daily-actions">
-          <button
-            className="action-button primary"
-            onClick={() => setState('selection')}
-          >
-            Explore Deeper
-          </button>
-
-          <button
-            className="action-button secondary"
-            onClick={() => setState('centering')}
-          >
-            Draw Another Card
-          </button>
-
-          <button
-            className="action-button secondary"
-            onClick={() => setState('welcome')}
-          >
-            Return Home
-          </button>
-        </div>
+      <div className="daily-header">
+        <p className="daily-label">Your Card for Today</p>
+        <p className="daily-date">{currentDate}</p>
       </div>
-      
+
+      {question && (
+        <div className="daily-question">
+          <p className="question-text">{question}</p>
+        </div>
+      )}
+
+      <div className="daily-actions">
+        <button className="action-button secondary" onClick={() => setState('selection')}>
+          Draw a Card
+        </button>
+        <button className="action-button secondary" onClick={() => { reset(); setState('welcome') }}>
+          Return Home
+        </button>
+      </div>
+
       <style>{`
         .daily-container {
           position: fixed;
           top: 0;
           left: 0;
           width: 100vw;
-          height: 100vh;
-          display: flex;
+          height: 100dvh;
           pointer-events: none;
-        }
-
-        .card-spacer {
-          flex: 1;
-          pointer-events: none;
-        }
-
-        .daily-loading {
-          width: 100vw;
-          height: 100vh;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: linear-gradient(135deg, #f5f3f0 0%, #e8e4e0 100%);
-        }
-
-        .daily-loading p {
-          color: #8a8a8a;
-          font-size: 1.1rem;
-        }
-
-        .content-panel {
-          flex: 1;
-          padding: 3rem;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          background: rgba(255, 255, 255, 0.85);
-          backdrop-filter: blur(10px);
-          overflow-y: auto;
-          pointer-events: auto;
         }
 
         .daily-header {
+          position: absolute;
+          top: 5%;
+          left: 50%;
+          transform: translateX(-50%);
           text-align: center;
-          margin-bottom: 2rem;
+          pointer-events: none;
+          white-space: nowrap;
         }
 
-        .daily-title {
-          font-size: 2rem;
+        .daily-label {
+          font-size: clamp(1.2rem, 3vw, 1.8rem);
           color: #5a5a5a;
           font-weight: 300;
-          margin-bottom: 0.5rem;
+          letter-spacing: 0.05em;
+          margin: 0 0 0.3rem;
         }
 
         .daily-date {
+          font-size: clamp(0.75rem, 1.8vw, 0.95rem);
           color: #8a8a8a;
-          font-size: 1rem;
           font-weight: 400;
-          margin-bottom: 1.5rem;
+          margin: 0;
         }
 
-        .card-theme {
-          font-size: 2.5rem;
+        .daily-question {
+          position: absolute;
+          bottom: 18%;
+          left: 50%;
+          transform: translateX(-50%);
+          text-align: center;
+          max-width: min(600px, 85vw);
+          pointer-events: none;
+          animation: fadeUp 0.8s ease forwards;
+        }
+
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+          to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        .question-text {
+          font-size: clamp(1rem, 2.5vw, 1.3rem);
           color: #5a5a5a;
           font-weight: 300;
-          text-transform: capitalize;
-          margin-top: 1rem;
+          font-style: italic;
+          line-height: 1.6;
+          margin: 0;
         }
 
-        .daily-messages {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          gap: 1.5rem;
-        }
-
-        .daily-message, .daily-intention {
-          padding: 2rem;
-          background: rgba(255, 255, 255, 0.5);
-          border-radius: 20px;
-          backdrop-filter: blur(5px);
-        }
-
-        .daily-message h3, .daily-intention h3 {
-          color: #d4af37;
-          font-size: 1.3rem;
-          margin-bottom: 1rem;
-          font-weight: 500;
-          text-transform: capitalize;
-        }
-
-        .daily-message p, .daily-intention p {
-          color: #6a6a6a;
-          line-height: 1.8;
-          font-size: 1.15rem;
-        }
-        
         .daily-actions {
+          position: absolute;
+          bottom: 5%;
+          left: 50%;
+          transform: translateX(-50%);
           display: flex;
-          flex-wrap: wrap;
           gap: 1rem;
-          justify-content: center;
-          margin-top: 2rem;
+          align-items: center;
+          pointer-events: auto;
         }
-        
+
         .action-button {
-          padding: 1rem 2rem;
+          padding: 0.8rem 1.5rem;
           border: none;
-          border-radius: 30px;
-          font-size: 1rem;
+          border-radius: 25px;
+          font-size: 0.9rem;
           font-weight: 500;
           cursor: pointer;
           transition: all 0.3s ease;
-          min-width: 160px;
         }
-        
-        .action-button.primary {
-          background: linear-gradient(135deg, #d4af37, #b8941f);
-          color: white;
-          box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
-        }
-        
-        .action-button.primary:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
-        }
-        
+
         .action-button.secondary {
           background: rgba(255, 255, 255, 0.9);
           color: #5a5a5a;
           border: 2px solid #d4af37;
         }
-        
+
         .action-button.secondary:hover {
           background: rgba(212, 175, 55, 0.1);
           transform: translateY(-2px);
         }
-        
+
         @media (max-width: 768px) {
-          .daily-container {
-            padding: 1rem;
-          }
-          
-          .daily-title {
-            font-size: 2rem;
-          }
-          
-          .daily-date {
-            font-size: 1rem;
-          }
-          
-          .daily-card-display {
-            height: 300px;
-          }
-          
-          .daily-content {
-            max-width: 90%;
-          }
-          
-          .daily-message, .daily-intention {
-            padding: 1rem;
-            margin-bottom: 1rem;
-          }
-          
           .daily-actions {
             flex-direction: column;
-            align-items: center;
+            bottom: 6%;
+            gap: 0.6rem;
           }
-          
+
           .action-button {
-            min-width: 200px;
+            min-width: 160px;
+            text-align: center;
           }
         }
       `}</style>
