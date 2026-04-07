@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Float } from '@react-three/drei'
+import { SafeTexture } from '../TextureLoader'
 import * as THREE from 'three'
 
 const FloatingOrb = () => {
@@ -15,16 +16,20 @@ const FloatingOrb = () => {
 
   return (
     <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
-      <mesh ref={meshRef} position={[0, 0, -2]}>
-        <sphereGeometry args={[0.8, 32, 32]} />
-        <meshStandardMaterial
-          color="#d4af37"
-          transparent
-          opacity={0.3}
-          roughness={0.1}
-          metalness={0.8}
-        />
-      </mesh>
+      <SafeTexture url="Orb.png">
+        {(texture) => (
+          <mesh ref={meshRef} position={[0, 0, -2]}>
+            <planeGeometry args={[2.2, 2.2]} />
+            <meshBasicMaterial
+              map={texture}
+              transparent
+              opacity={0.85}
+              blending={THREE.AdditiveBlending}
+              depthWrite={false}
+            />
+          </mesh>
+        )}
+      </SafeTexture>
     </Float>
   )
 }

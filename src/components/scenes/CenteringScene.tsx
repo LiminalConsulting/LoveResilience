@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
+import { SafeTexture } from '../TextureLoader'
 import * as THREE from 'three'
 
 interface CenteringSceneProps {
@@ -16,7 +17,7 @@ const BreathingOrb = ({
   breathPhase: 'in' | 'out'
 }) => {
   const meshRef = useRef<THREE.Mesh>(null)
-  const materialRef = useRef<THREE.MeshStandardMaterial>(null)
+  const materialRef = useRef<THREE.MeshBasicMaterial>(null)
   const phaseStartTime = useRef<number | null>(null)
   const lastBreathPhase = useRef<'in' | 'out'>(breathPhase)
 
@@ -39,22 +40,26 @@ const BreathingOrb = ({
         : 1.0 - (eased * 0.5)
 
       meshRef.current.scale.setScalar(scale)
-      materialRef.current.opacity = 0.3 + (scale - 0.5) * 0.4
+      materialRef.current.opacity = 0.3 + (scale - 0.5) * 0.55
     }
   })
 
   return (
-    <mesh ref={meshRef} position={[0, 0, -2]}>
-      <sphereGeometry args={[1, 32, 32]} />
-      <meshStandardMaterial
-        ref={materialRef}
-        color="#d4af37"
-        transparent
-        opacity={0.3}
-        roughness={0.1}
-        metalness={0.5}
-      />
-    </mesh>
+    <SafeTexture url="Orb.png">
+      {(texture) => (
+        <mesh ref={meshRef} position={[0, 0, -2]}>
+          <planeGeometry args={[3, 3]} />
+          <meshBasicMaterial
+            ref={materialRef}
+            map={texture}
+            transparent
+            opacity={0.3}
+            blending={THREE.AdditiveBlending}
+            depthWrite={false}
+          />
+        </mesh>
+      )}
+    </SafeTexture>
   )
 }
 

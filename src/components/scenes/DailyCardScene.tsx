@@ -20,14 +20,16 @@ const GoldenOrb = () => {
   })
 
   return (
-    <SafeTexture url="Backside.jpg">
+    <SafeTexture url="Orb.png">
       {(texture) => (
         <mesh ref={meshRef} position={[0, 0, -1]}>
           <planeGeometry args={[4, 4]} />
           <meshBasicMaterial
             map={texture}
             transparent
-            opacity={0.3}
+            opacity={0.4}
+            blending={THREE.AdditiveBlending}
+            depthWrite={false}
           />
         </mesh>
       )}
