@@ -17,7 +17,7 @@ const GoldenOrb = () => {
           <orbShaderMaterial
             map={texture}
             opacity={0.85}
-            tintStrength={0.1}
+            tintStrength={0.0}
             transparent
             depthWrite={false}
           />
