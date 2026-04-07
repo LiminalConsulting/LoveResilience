@@ -1,34 +1,22 @@
-import { useRef } from 'react'
-import { useFrame } from '@react-three/fiber'
 import { SafeTexture } from '../TextureLoader'
 import { Card3D } from './Card3D'
-import * as THREE from 'three'
 
 interface DailyCardSceneProps {
   imagePath: string
   theme: string
 }
 
-// Golden mandala orb - rotates behind the card
+// Orb - sits behind the card, faces camera
 const GoldenOrb = () => {
-  const meshRef = useRef<THREE.Mesh>(null)
-
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.z = state.clock.elapsedTime * 0.15
-    }
-  })
-
   return (
     <SafeTexture url="Orb.png">
       {(texture) => (
-        <mesh ref={meshRef} position={[0, 0, -1]}>
+        <mesh position={[0, 0, -1]}>
           <planeGeometry args={[4, 4]} />
           <meshBasicMaterial
             map={texture}
             transparent
-            opacity={0.4}
-            blending={THREE.AdditiveBlending}
+            opacity={0.85}
             depthWrite={false}
           />
         </mesh>
