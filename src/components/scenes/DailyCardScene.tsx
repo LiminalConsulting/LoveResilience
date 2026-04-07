@@ -1,30 +1,9 @@
-import { SafeTexture } from '../TextureLoader'
 import { Card3D } from './Card3D'
-import './OrbMaterial'
+import { OrbMesh } from './OrbMesh'
 
 interface DailyCardSceneProps {
   imagePath: string
   theme: string
-}
-
-// Orb - sits behind the card, faces camera
-const GoldenOrb = () => {
-  return (
-    <SafeTexture url="Orb.png">
-      {(texture) => (
-        <mesh position={[0, 0, -1]}>
-          <planeGeometry args={[4, 4]} />
-          <orbShaderMaterial
-            map={texture}
-            opacity={0.85}
-            tintStrength={0.0}
-            transparent
-            depthWrite={false}
-          />
-        </mesh>
-      )}
-    </SafeTexture>
-  )
 }
 
 export const DailyCardScene = ({ imagePath }: DailyCardSceneProps) => {
@@ -35,7 +14,7 @@ export const DailyCardScene = ({ imagePath }: DailyCardSceneProps) => {
       <pointLight position={[-3, 3, 3]} intensity={0.4} color="#d4af37" />
 
       <group position={[-2.5, 0, 0]}>
-        <GoldenOrb />
+        <OrbMesh size={4} opacity={0.85} z={-1} />
         <Card3D
           imagePath={imagePath}
           size={[2.5, 3.8]}
