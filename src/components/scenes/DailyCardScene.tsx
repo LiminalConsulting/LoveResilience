@@ -1,5 +1,6 @@
 import { SafeTexture } from '../TextureLoader'
 import { Card3D } from './Card3D'
+import './OrbMaterial'
 
 interface DailyCardSceneProps {
   imagePath: string
@@ -13,11 +14,11 @@ const GoldenOrb = () => {
       {(texture) => (
         <mesh position={[0, 0, -1]}>
           <planeGeometry args={[4, 4]} />
-          <meshBasicMaterial
+          <orbShaderMaterial
             map={texture}
-            color="#d4af37"
-            transparent
             opacity={0.85}
+            tintStrength={0.5}
+            transparent
             depthWrite={false}
           />
         </mesh>

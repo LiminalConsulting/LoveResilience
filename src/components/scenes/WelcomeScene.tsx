@@ -1,5 +1,6 @@
 import { Float } from '@react-three/drei'
 import { SafeTexture } from '../TextureLoader'
+import './OrbMaterial'
 
 const FloatingOrb = () => {
   return (
@@ -8,11 +9,11 @@ const FloatingOrb = () => {
         {(texture) => (
           <mesh position={[0, 0, -2]}>
             <planeGeometry args={[2.2, 2.2]} />
-            <meshBasicMaterial
+            <orbShaderMaterial
               map={texture}
-              color="#d4af37"
-              transparent
               opacity={0.9}
+              tintStrength={0.5}
+              transparent
               depthWrite={false}
             />
           </mesh>

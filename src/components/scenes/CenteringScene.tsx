@@ -1,7 +1,8 @@
 import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { SafeTexture } from '../TextureLoader'
-
+import * as THREE from 'three'
+import './OrbMaterial'
 
 interface CenteringSceneProps {
   phase: 'check' | 'breathe' | 'intention' | 'ready'
@@ -17,7 +18,7 @@ const BreathingOrb = ({
   breathPhase: 'in' | 'out'
 }) => {
   const meshRef = useRef<THREE.Mesh>(null)
-  const materialRef = useRef<THREE.MeshBasicMaterial>(null)
+  const materialRef = useRef<any>(null)
   const phaseStartTime = useRef<number | null>(null)
   const lastBreathPhase = useRef<'in' | 'out'>(breathPhase)
 
@@ -49,12 +50,12 @@ const BreathingOrb = ({
       {(texture) => (
         <mesh ref={meshRef} position={[0, 0, -2]}>
           <planeGeometry args={[3, 3]} />
-          <meshBasicMaterial
+          <orbShaderMaterial
             ref={materialRef}
             map={texture}
-            color="#d4af37"
-            transparent
             opacity={0.5}
+            tintStrength={0.5}
+            transparent
             depthWrite={false}
           />
         </mesh>
