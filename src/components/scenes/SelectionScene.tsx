@@ -27,7 +27,7 @@ const deckPosition = (index: number): [number, number, number] => [
 ]
 
 const FOCUS_POSITION: [number, number, number] = [0, 0, 4]
-const FOCUS_SCALE = 2.5
+const FOCUS_SCALE = 1.25
 
 type SceneMode = 'spawning' | 'grid' | 'focusing' | 'shuffling'
 
@@ -56,13 +56,17 @@ export const SelectionScene = () => {
   const [mode, setMode] = useState<SceneMode>('spawning')
   const shuffleTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // Initial load — pick cards and spawn
+  // Initial load — pick cards, mount at deck, then spread to grid
   useEffect(() => {
     if (!cardData) return
     setActiveCards(pickCards())
     setMode('spawning')
-    const t = setTimeout(() => setMode('grid'), 50) // one frame delay so deck positions render first
-    return () => clearTimeout(t)
+    // Two rAFs: first lets React commit the deck positions, second triggers the spread
+    let raf1: number, raf2: number
+    raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => setMode('grid'))
+    })
+    return () => { cancelAnimationFrame(raf1); cancelAnimationFrame(raf2) }
   }, [cardData])
 
   // When focusedCardId changes externally (e.g. cleared by "draw another")
@@ -83,14 +87,18 @@ export const SelectionScene = () => {
   const handleShuffle = useCallback(() => {
     if (mode !== 'grid') return
     setMode('shuffling')
-    // After cards reach deck (~700ms), swap and re-spawn
+    // Step 1: wait for cards to fully reach deck position (~1000ms)
     shuffleTimer.current = setTimeout(() => {
       setFocusedCardId(null)
       setSelectedCard(null)
+      // Step 2: swap cards while they're stacked (invisible overlap)
       setActiveCards(pickCards())
       setMode('spawning')
-      setTimeout(() => setMode('grid'), 50)
-    }, 700)
+      // Step 3: wait one animation frame so new cards mount at deck position, then spread
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => setMode('grid'))
+      })
+    }, 1000)
   }, [mode, pickCards, setFocusedCardId, setSelectedCard])
 
   // Expose shuffle handler to store so overlay can call it
