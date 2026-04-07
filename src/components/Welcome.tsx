@@ -15,7 +15,12 @@ export const Welcome = () => {
 
   return (
     <div className="welcome-container">
-      
+
+      <div className="welcome-header">
+        <h1 className="welcome-title">Love Resilience</h1>
+        <p className="welcome-tagline">A digital sanctuary for practical spirituality</p>
+      </div>
+
       <div className="welcome-actions">
         <button 
           className="action-button primary"
@@ -49,7 +54,29 @@ export const Welcome = () => {
           align-items: center;
           pointer-events: none;
         }
-        
+
+        .welcome-header {
+          position: absolute;
+          top: 28%;
+          text-align: center;
+          pointer-events: none;
+        }
+
+        .welcome-title {
+          font-size: clamp(1.8rem, 5vw, 3rem);
+          color: #5a5a5a;
+          font-weight: 300;
+          letter-spacing: 0.05em;
+          margin: 0 0 0.5rem;
+        }
+
+        .welcome-tagline {
+          font-size: clamp(0.8rem, 2vw, 1rem);
+          color: #8a8a8a;
+          font-weight: 400;
+          margin: 0;
+        }
+
         .welcome-actions {
           position: absolute;
           bottom: 20%;

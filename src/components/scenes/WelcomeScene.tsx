@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { Text, Float } from '@react-three/drei'
+import { Float } from '@react-three/drei'
 import * as THREE from 'three'
 
 const FloatingOrb = () => {
@@ -33,29 +33,6 @@ export const WelcomeScene = () => {
   return (
     <>
       <FloatingOrb />
-
-      <Text
-        position={[0, 2, 0]}
-        fontSize={0.8}
-        color="#5a5a5a"
-        anchorX="center"
-        anchorY="middle"
-        fontWeight="300"
-      >
-        Love Resilience
-      </Text>
-
-      <Text
-        position={[0, 1, 0]}
-        fontSize={0.3}
-        color="#8a8a8a"
-        anchorX="center"
-        anchorY="middle"
-        maxWidth={6}
-        textAlign="center"
-      >
-        A digital sanctuary for practical spirituality
-      </Text>
     </>
   )
 }
