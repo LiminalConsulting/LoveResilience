@@ -16,8 +16,8 @@ const FadedGroup = ({ children, opacity }: { children: ReactNode; opacity: numbe
         if ('material' in object) {
           const mesh = object as THREE.Mesh
           if (mesh.material) {
-            const material = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
-            material.forEach((mat) => {
+            const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
+            mats.forEach((mat) => {
               if (mat instanceof THREE.Material) {
                 mat.transparent = true
                 mat.opacity = opacity
@@ -50,9 +50,7 @@ export const SceneOrchestrator = () => {
   const transitionDuration = 1000
 
   useEffect(() => {
-    if (isTransitioning) {
-      transitionStartTime.current = Date.now()
-    }
+    if (isTransitioning) transitionStartTime.current = Date.now()
   }, [isTransitioning])
 
   useFrame(() => {
@@ -64,57 +62,49 @@ export const SceneOrchestrator = () => {
     }
   })
 
-  const getSceneContent = (state: string) => {
+  const selectionActive = currentState === 'selection'
+
+  // Non-selection scenes — only rendered when active
+  const getNonSelectionScene = (state: string) => {
     switch (state) {
-      case 'welcome':
-        return <WelcomeScene />
-      case 'centering':
-        return <CenteringScene
+      case 'welcome': return <WelcomeScene />
+      case 'centering': return (
+        <CenteringScene
           phase={centeringPhase}
           progress={centeringProgress}
           breathPhase={breathPhase}
         />
-      case 'selection':
-        return <SelectionScene />
-      case 'daily':
-        return selectedCard
-          ? <DailyCardScene imagePath={selectedCard.imagePath} theme={selectedCard.theme} />
-          : null
-      default:
-        return null
+      )
+      case 'daily': return selectedCard
+        ? <DailyCardScene imagePath={selectedCard.imagePath} theme={selectedCard.theme} />
+        : null
+      default: return null
     }
-  }
-
-  if (isTransitioning && previousState) {
-    return (
-      <>
-        <ambientLight intensity={0.6} />
-        <pointLight position={[10, 10, 10]} intensity={0.8} />
-        <FadedGroup opacity={1 - transitionProgress}>
-          {getSceneContent(previousState)}
-        </FadedGroup>
-        <FadedGroup opacity={transitionProgress}>
-          {getSceneContent(currentState)}
-        </FadedGroup>
-      </>
-    )
   }
 
   return (
     <>
       <ambientLight intensity={0.6} />
       <pointLight position={[10, 10, 10]} intensity={0.8} />
-      {currentState === 'welcome' && <WelcomeScene />}
-      {currentState === 'centering' && (
-        <CenteringScene
-          phase={centeringPhase}
-          progress={centeringProgress}
-          breathPhase={breathPhase}
-        />
-      )}
-      {currentState === 'selection' && <SelectionScene />}
-      {currentState === 'daily' && selectedCard && (
-        <DailyCardScene imagePath={selectedCard.imagePath} theme={selectedCard.theme} />
+
+      {/* SelectionScene is ALWAYS mounted — warm pool, just invisible when inactive */}
+      <SelectionScene active={selectionActive} />
+
+      {/* All other scenes mount/unmount normally */}
+      {isTransitioning && previousState && previousState !== 'selection' ? (
+        <FadedGroup opacity={1 - transitionProgress}>
+          {getNonSelectionScene(previousState)}
+        </FadedGroup>
+      ) : null}
+
+      {isTransitioning && currentState !== 'selection' ? (
+        <FadedGroup opacity={transitionProgress}>
+          {getNonSelectionScene(currentState)}
+        </FadedGroup>
+      ) : null}
+
+      {!isTransitioning && currentState !== 'selection' && (
+        getNonSelectionScene(currentState)
       )}
     </>
   )

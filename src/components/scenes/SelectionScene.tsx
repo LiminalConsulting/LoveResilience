@@ -10,8 +10,8 @@ const ROWS = 3
 const COUNT = COLS * ROWS
 const H_SPACING = 1.8
 const V_SPACING = 2.2
+const FOCUS_POSITION: [number, number, number] = [0, 0, 4]
 
-// Positions
 const gridPosition = (index: number): [number, number, number] => {
   const col = index % COLS
   const row = Math.floor(index / COLS)
@@ -26,10 +26,16 @@ const deckPosition = (index: number): [number, number, number] => [
   0, 0, index * 0.015,
 ]
 
-const FOCUS_POSITION: [number, number, number] = [0, 0, 4]
-const FOCUS_SCALE = 1.25
+// Responsive focus scale — portrait mobile gets more, landscape/desktop gets less
+const getFocusScale = (aspect: number) => aspect >= 1 ? 1.25 : 2.0
 
 type SceneMode = 'spawning' | 'grid' | 'focusing' | 'shuffling'
+
+// Slot: stable identity, mutable card data
+interface Slot {
+  slotIndex: number
+  card: Card | null
+}
 
 const CameraController = () => {
   const { size, camera } = useThree()
@@ -42,26 +48,43 @@ const CameraController = () => {
   return null
 }
 
-export const SelectionScene = () => {
+interface SelectionSceneProps {
+  active: boolean
+}
+
+export const SelectionScene = ({ active }: SelectionSceneProps) => {
   const { cardData, setSelectedCard, setFocusedCardId, focusedCardId } = useAppStore()
+  const { size } = useThree()
+  const aspect = size.width / size.height
+  const focusScale = getFocusScale(aspect)
 
-  // Pick 12 random cards from the full deck
-  const pickCards = useCallback(() => {
-    if (!cardData) return []
-    const shuffled = [...cardData.cards].sort(() => Math.random() - 0.5)
-    return shuffled.slice(0, COUNT)
-  }, [cardData])
-
-  const [activeCards, setActiveCards] = useState<Card[]>([])
+  // Fixed pool of COUNT slots — never remounted
+  const [slots, setSlots] = useState<Slot[]>(() =>
+    Array.from({ length: COUNT }, (_, i) => ({ slotIndex: i, card: null }))
+  )
   const [mode, setMode] = useState<SceneMode>('spawning')
   const shuffleTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // Initial load — pick cards, mount at deck, then spread to grid
+  const pickCards = useCallback((): Card[] => {
+    if (!cardData) return []
+    return [...cardData.cards]
+      .sort(() => Math.random() - 0.5)
+      .slice(0, COUNT)
+  }, [cardData])
+
+  // Fill slots with cards — stable slot keys, just swap card data
+  const fillSlots = useCallback((cards: Card[]) => {
+    setSlots(Array.from({ length: COUNT }, (_, i) => ({
+      slotIndex: i,
+      card: cards[i] ?? null,
+    })))
+  }, [])
+
+  // On first cardData load — fill slots at deck, then spread
   useEffect(() => {
     if (!cardData) return
-    setActiveCards(pickCards())
+    fillSlots(pickCards())
     setMode('spawning')
-    // Two rAFs: first lets React commit the deck positions, second triggers the spread
     let raf1: number, raf2: number
     raf1 = requestAnimationFrame(() => {
       raf2 = requestAnimationFrame(() => setMode('grid'))
@@ -69,7 +92,7 @@ export const SelectionScene = () => {
     return () => { cancelAnimationFrame(raf1); cancelAnimationFrame(raf2) }
   }, [cardData])
 
-  // When focusedCardId changes externally (e.g. cleared by "draw another")
+  // "Draw another" — clear focus, return to grid
   useEffect(() => {
     if (!focusedCardId && mode === 'focusing') {
       setMode('grid')
@@ -77,39 +100,35 @@ export const SelectionScene = () => {
   }, [focusedCardId])
 
   const handleCardClick = (card: Card) => {
-    if (mode !== 'grid') return
+    if (mode !== 'grid' || !active) return
     setSelectedCard(card)
     setFocusedCardId(card.id)
     setMode('focusing')
   }
 
-  // Called from overlay via store action — exposed via shuffle trigger
   const handleShuffle = useCallback(() => {
-    if (mode !== 'grid') return
+    if (mode !== 'grid' || !active) return
+    setFocusedCardId(null)
+    setSelectedCard(null)
     setMode('shuffling')
-    // Step 1: wait for cards to fully reach deck position (~1000ms)
+
+    // Wait for cards to reach deck, then swap data in place and re-spread
     shuffleTimer.current = setTimeout(() => {
-      setFocusedCardId(null)
-      setSelectedCard(null)
-      // Step 2: swap cards while they're stacked (invisible overlap)
-      setActiveCards(pickCards())
+      fillSlots(pickCards())       // update card data in existing slots — no remount
       setMode('spawning')
-      // Step 3: wait one animation frame so new cards mount at deck position, then spread
       requestAnimationFrame(() => {
         requestAnimationFrame(() => setMode('grid'))
       })
-    }, 1000)
-  }, [mode, pickCards, setFocusedCardId, setSelectedCard])
+    }, 900)
+  }, [mode, active, pickCards, fillSlots, setFocusedCardId, setSelectedCard])
 
-  // Expose shuffle handler to store so overlay can call it
   useEffect(() => {
     useAppStore.setState({ triggerShuffle: handleShuffle })
   }, [handleShuffle])
 
-  // Cleanup timer on unmount
   useEffect(() => () => { if (shuffleTimer.current) clearTimeout(shuffleTimer.current) }, [])
 
-  if (!cardData || activeCards.length === 0) return null
+  if (!cardData) return null
 
   return (
     <>
@@ -117,30 +136,32 @@ export const SelectionScene = () => {
       <pointLight position={[-5, -5, 5]} intensity={0.3} color="#d4af37" />
       <CameraController />
 
-      {activeCards.map((card, index) => {
+      {slots.map(({ slotIndex, card }) => {
+        if (!card) return null
+
         const isSelected = card.id === focusedCardId
-        const isFaded = mode === 'focusing' && !isSelected
+        const isFaded = !active || (mode === 'focusing' && !isSelected)
 
         let targetPosition: [number, number, number]
         if (mode === 'spawning' || mode === 'shuffling') {
-          targetPosition = deckPosition(index)
+          targetPosition = deckPosition(slotIndex)
         } else if (isSelected) {
           targetPosition = FOCUS_POSITION
         } else {
-          targetPosition = gridPosition(index)
+          targetPosition = gridPosition(slotIndex)
         }
 
         return (
           <Card3D
-            key={card.id}
+            key={`slot-${slotIndex}`}          // stable key — never remounts
             frontPath={card.imagePath}
             backPath={cardData.backside}
             size={[1.2, 1.8]}
             targetPosition={targetPosition}
             targetOpacity={isFaded ? 0 : 1}
-            targetScale={isSelected ? FOCUS_SCALE : 1}
+            targetScale={isSelected ? focusScale : 1}
             flipped={isSelected}
-            interactive={mode === 'grid'}
+            interactive={mode === 'grid' && active}
             onClick={() => handleCardClick(card)}
           />
         )
