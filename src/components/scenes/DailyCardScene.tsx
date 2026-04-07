@@ -22,8 +22,8 @@ export const DailyCardScene = ({ imagePath }: DailyCardSceneProps) => {
           frontPath={imagePath}
           backPath={cardData.backside}
           size={[2.5, 3.8]}
-          position={[0, 0, 0]}
-          selected={true}
+          targetPosition={[0, 0, 0]}
+          flipped={true}
         />
       </group>
     </>

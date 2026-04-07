@@ -32,6 +32,7 @@ interface AppStore {
   setCenteringPhase: (phase: 'check' | 'breathe' | 'intention' | 'ready') => void
   setBreathPhase: (phase: 'in' | 'out') => void
   setBreathCountdown: (countdown: number) => void
+  triggerShuffle: (() => void) | null
   reset: () => void
 }
 
@@ -73,6 +74,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
   centeringPhase: 'check',
   breathPhase: 'in',
   breathCountdown: 4,
+  triggerShuffle: null,
 
   setState: (state) => set({ currentState: state }),
 

@@ -2,11 +2,15 @@ import { useEffect } from 'react'
 import { useAppStore } from '../store/useAppStore'
 
 export const CardSelection = () => {
-  const { shuffleCards, setState, selectedCard, focusedCardId, setSelectedCard, setFocusedCardId, reset } = useAppStore()
-
-  useEffect(() => {
-    shuffleCards()
-  }, [shuffleCards])
+  const {
+    setState,
+    selectedCard,
+    focusedCardId,
+    setSelectedCard,
+    setFocusedCardId,
+    triggerShuffle,
+    reset,
+  } = useAppStore()
 
   const isFocused = !!focusedCardId
   const question = selectedCard?.questions?.[0] ?? null
@@ -14,7 +18,6 @@ export const CardSelection = () => {
   const handleDrawAnother = () => {
     setSelectedCard(null)
     setFocusedCardId(null)
-    shuffleCards()
   }
 
   const handleReturnHome = () => {
@@ -34,14 +37,14 @@ export const CardSelection = () => {
       )}
 
       {isFocused && question && (
-        <div className="card-question">
+        <div key={focusedCardId} className="card-question">
           <p className="question-text">{question}</p>
         </div>
       )}
 
       <div className="selection-actions">
         {!isFocused && (
-          <button className="action-button secondary" onClick={shuffleCards}>
+          <button className="action-button secondary" onClick={() => triggerShuffle?.()}>
             Shuffle Cards
           </button>
         )}
@@ -103,11 +106,11 @@ export const CardSelection = () => {
           text-align: center;
           max-width: min(600px, 85vw);
           pointer-events: none;
-          animation: fadeIn 0.8s ease forwards;
+          animation: fadeUp 0.8s ease forwards;
         }
 
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateX(-50%) translateY(10px); }
           to   { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
 
