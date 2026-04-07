@@ -7,7 +7,7 @@ interface DailyCardSceneProps {
   theme: string
 }
 
-const getFocusScale = (aspect: number) => aspect >= 1 ? 1.25 : 2.0
+const getFocusScale = (aspect: number) => aspect >= 1 ? 1.25 : 3.0
 
 export const DailyCardScene = ({ imagePath }: DailyCardSceneProps) => {
   const cardData = useAppStore(state => state.cardData)

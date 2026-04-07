@@ -27,7 +27,7 @@ const deckPosition = (index: number): [number, number, number] => [
 ]
 
 // Responsive focus scale — portrait mobile gets more, landscape/desktop gets less
-const getFocusScale = (aspect: number) => aspect >= 1 ? 1.25 : 2.0
+const getFocusScale = (aspect: number) => aspect >= 1 ? 1.25 : 3.0
 
 type SceneMode = 'spawning' | 'grid' | 'focusing' | 'shuffling'
 

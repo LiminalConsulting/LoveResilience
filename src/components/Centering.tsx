@@ -255,21 +255,22 @@ export const Centering = () => {
 
         .check-options {
           display: flex;
-          flex-direction: column;
+          flex-direction: row;
           gap: 1rem;
           align-items: center;
+          flex-wrap: wrap;
+          justify-content: center;
         }
 
         .action-button {
-          padding: 1rem 2rem;
+          padding: 0.85rem 1.8rem;
           border: none;
           border-radius: 30px;
-          font-size: 1rem;
+          font-size: clamp(0.85rem, 2vw, 1rem);
           font-weight: 500;
           cursor: pointer;
           transition: all 0.3s ease;
-          min-width: 220px;
-          text-align: center;
+          white-space: nowrap;
         }
 
         .action-button.primary {
@@ -334,14 +335,9 @@ export const Centering = () => {
           margin-bottom: 1rem;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 480px) {
           .centering-actions {
-            bottom: 15%;
-          }
-
-          .action-button {
-            min-width: 250px;
-            padding: 1.2rem 2rem;
+            bottom: 12%;
           }
         }
       `}</style>

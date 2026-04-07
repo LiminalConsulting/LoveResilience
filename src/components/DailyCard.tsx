@@ -117,10 +117,11 @@ export const DailyCard = () => {
           padding: 0.8rem 1.5rem;
           border: none;
           border-radius: 25px;
-          font-size: 0.9rem;
+          font-size: clamp(0.8rem, 2vw, 0.9rem);
           font-weight: 500;
           cursor: pointer;
           transition: all 0.3s ease;
+          white-space: nowrap;
         }
 
         .action-button.secondary {
@@ -132,19 +133,6 @@ export const DailyCard = () => {
         .action-button.secondary:hover {
           background: rgba(212, 175, 55, 0.1);
           transform: translateY(-2px);
-        }
-
-        @media (max-width: 768px) {
-          .daily-actions {
-            flex-direction: column;
-            bottom: 6%;
-            gap: 0.6rem;
-          }
-
-          .action-button {
-            min-width: 160px;
-            text-align: center;
-          }
         }
       `}</style>
     </div>
