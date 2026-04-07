@@ -7,12 +7,13 @@ interface DailyCardSceneProps {
   theme: string
 }
 
-const getFocusScale = (aspect: number) => aspect >= 1 ? 1.25 : 3.0
+// Continuous curve matching selection scene's getFocusScale, scaled up 2×
+const getDailyScale = (aspect: number) => Math.max(2.5, Math.min(6.0, 2.5 / Math.min(aspect, 1.0)))
 
 export const DailyCardScene = ({ imagePath }: DailyCardSceneProps) => {
   const cardData = useAppStore(state => state.cardData)
   const { size } = useThree()
-  const scale = getFocusScale(size.width / size.height)
+  const scale = getDailyScale(size.width / size.height)
 
   if (!cardData) return null
 

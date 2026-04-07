@@ -26,8 +26,9 @@ const deckPosition = (index: number): [number, number, number] => [
   0, 0, index * 0.015,
 ]
 
-// Responsive focus scale — portrait mobile gets more, landscape/desktop gets less
-const getFocusScale = (aspect: number) => aspect >= 1 ? 1.25 : 3.0
+// Responsive focus scale — continuous curve, no hard threshold
+// aspect=2 (wide desktop) → ~1.25, aspect=1 → ~1.8, aspect=0.5 (portrait) → ~3.0
+const getFocusScale = (aspect: number) => Math.max(1.25, Math.min(3.0, 1.25 / Math.min(aspect, 1.0)))
 
 type SceneMode = 'spawning' | 'grid' | 'focusing' | 'shuffling'
 
@@ -41,7 +42,7 @@ const CameraController = () => {
   const { size, camera } = useThree()
   useFrame(() => {
     const aspect = size.width / size.height
-    const targetZ = aspect >= 1 ? 8 : Math.min(8 / aspect, 16)
+    const targetZ = Math.min(8 / Math.min(aspect, 1.0), 16)
     camera.position.lerp(new THREE.Vector3(0, 0, targetZ), 0.02)
     camera.lookAt(0, 0, 0)
   })
@@ -80,9 +81,14 @@ export const SelectionScene = ({ active }: SelectionSceneProps) => {
     })))
   }, [])
 
-  // On first cardData load — fill slots at deck, then spread
+  // Track whether we've done the initial fill
+  const initializedRef = useRef(false)
+
+  // Fill slots only on initial card load — language switches patch paths in-place via store,
+  // so cardData object changes but card IDs stay the same; we don't want to reset the scene.
   useEffect(() => {
-    if (!cardData) return
+    if (!cardData || initializedRef.current) return
+    initializedRef.current = true
     fillSlots(pickCards())
     setMode('spawning')
     let raf1: number, raf2: number
@@ -91,6 +97,17 @@ export const SelectionScene = ({ active }: SelectionSceneProps) => {
     })
     return () => { cancelAnimationFrame(raf1); cancelAnimationFrame(raf2) }
   }, [cardData])
+
+  // On language switch, cardData has new imagePaths but same IDs — patch slots in-place
+  const language = useAppStore(state => state.language)
+  useEffect(() => {
+    if (!cardData || !initializedRef.current) return
+    setSlots(prev => prev.map(slot => {
+      if (!slot.card) return slot
+      const updated = cardData.cards.find(c => c.id === slot.card!.id)
+      return updated ? { ...slot, card: updated } : slot
+    }))
+  }, [language, cardData])
 
   // "Draw another" — clear focus, return to grid
   useEffect(() => {
