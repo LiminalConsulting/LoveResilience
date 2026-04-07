@@ -123,7 +123,7 @@ export const SafeTexture = ({ url, children, fallback }: SafeTextureProps) => {
     <Suspense fallback={fallback || (
       <mesh>
         <planeGeometry args={[1.2, 1.8]} />
-        <meshStandardMaterial color="#e8e4e0" />
+        <meshBasicMaterial transparent opacity={0} />
       </mesh>
     )}>
       <TextureComponent url={url}>
