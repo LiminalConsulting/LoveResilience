@@ -9,7 +9,7 @@ export const UnifiedCanvas = () => {
       top: 0,
       left: 0,
       width: '100vw',
-      height: '100vh',
+      height: '100dvh',
       background: 'linear-gradient(135deg, #f5f3f0 0%, #e8e4e0 100%)'
     }}>
       <Canvas

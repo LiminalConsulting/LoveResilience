@@ -51,10 +51,14 @@ const FloatingCards = () => {
 }
 
 const CameraController = () => {
-  const { camera } = useThree()
+  const { camera, size } = useThree()
 
   useFrame(() => {
-    camera.position.lerp(new THREE.Vector3(0, 0, 8), 0.02)
+    const aspect = size.width / size.height
+    // On portrait/narrow screens, pull back so all 4 columns stay visible
+    // Base distance of 8 is tuned for ~16:9; scale inversely with aspect ratio
+    const targetZ = aspect >= 1 ? 8 : Math.min(8 / aspect, 16)
+    camera.position.lerp(new THREE.Vector3(0, 0, targetZ), 0.02)
     camera.lookAt(0, 0, 0)
   })
 
