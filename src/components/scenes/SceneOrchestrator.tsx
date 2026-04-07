@@ -54,7 +54,6 @@ export const SceneOrchestrator = () => {
   const centeringPhase = useAppStore(state => state.centeringPhase)
   const centeringProgress = useAppStore(state => state.centeringProgress)
   const breathPhase = useAppStore(state => state.breathPhase)
-  const breathCountdown = useAppStore(state => state.breathCountdown)
   const selectedCard = useAppStore(state => state.selectedCard)
 
   const transitionStartTime = useRef<number>(0)
@@ -91,7 +90,6 @@ export const SceneOrchestrator = () => {
           phase={centeringPhase}
           progress={centeringProgress}
           breathPhase={breathPhase}
-          breathCountdown={breathCountdown}
         />
       case 'selection':
         return <SelectionScene />
@@ -141,7 +139,6 @@ export const SceneOrchestrator = () => {
           phase={centeringPhase}
           progress={centeringProgress}
           breathPhase={breathPhase}
-          breathCountdown={breathCountdown}
         />
       )}
       {currentState === 'selection' && <SelectionScene />}
