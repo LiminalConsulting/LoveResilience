@@ -54,7 +54,7 @@ const BreathingOrb = ({
             ref={materialRef}
             map={texture}
             opacity={0.5}
-            tintStrength={0.5}
+            tintStrength={0.2}
             transparent
             depthWrite={false}
           />

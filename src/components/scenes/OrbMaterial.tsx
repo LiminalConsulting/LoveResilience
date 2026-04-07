@@ -9,9 +9,9 @@ const OrbShaderMaterial = shaderMaterial(
   {
     map: new THREE.Texture(),
     opacity: 1.0,
-    tintStrength: 0.5,
+    tintStrength: 0.2,
     tintColor: new THREE.Color('#d4af37'),
-    edgeFade: 0.75, // UV radius where fade begins (0–1, where 1 = corner of plane)
+    edgeFade: 0.9, // UV radius where fade begins (0–1, where 1 = corner of plane)
   },
   // Vertex shader
   `
