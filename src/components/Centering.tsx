@@ -1,10 +1,38 @@
 import { useEffect, useState } from 'react'
 import { useAppStore } from '../store/useAppStore'
 
+const t = {
+  en: {
+    check: 'How are you feeling right now?',
+    breathe: 'Follow the gentle rhythm with your breath',
+    intention: 'Set your intention for this moment',
+    ready: 'You are centered and ready',
+    center: "I'd like to center myself",
+    alreadyCentered: "I'm already centered",
+    breathIn: 'In',
+    breathOut: 'Out',
+    breathOf: (n: number) => `Breath ${n} of 3`,
+    skip: 'Skip to cards',
+  },
+  de: {
+    check: 'Wie fühlst du dich gerade?',
+    breathe: 'Folge dem sanften Rhythmus mit deinem Atem',
+    intention: 'Setze deine Absicht für diesen Moment',
+    ready: 'Du bist zentriert und bereit',
+    center: 'Ich möchte mich zentrieren',
+    alreadyCentered: 'Ich bin bereits zentriert',
+    breathIn: 'Ein',
+    breathOut: 'Aus',
+    breathOf: (n: number) => `Atemzug ${n} von 3`,
+    skip: 'Zu den Karten',
+  },
+}
+
 // 3D scene (orb only) is in CenteringScene in UnifiedCanvas
 
 export const Centering = () => {
-  const { setState, setCenteringProgress, setCenteringPhase, setBreathPhase, setBreathCountdown } = useAppStore()
+  const { setState, setCenteringProgress, setCenteringPhase, setBreathPhase, setBreathCountdown, language } = useAppStore()
+  const tx = t[language]
   const [phase, setPhase] = useState<'check' | 'breathe' | 'intention' | 'ready'>('check')
   const [breathCount, setBreathCount] = useState(0)
   const [breathPhase, setBreathPhaseLocal] = useState<'in' | 'out'>('in')
@@ -100,10 +128,10 @@ export const Centering = () => {
   }, [phase, setState])
 
   const phaseText: Record<string, string> = {
-    check: 'How are you feeling right now?',
-    breathe: 'Follow the gentle rhythm with your breath',
-    intention: 'Set your intention for this moment',
-    ready: 'You are centered and ready',
+    check: tx.check,
+    breathe: tx.breathe,
+    intention: tx.intention,
+    ready: tx.ready,
   }
 
   // For intention/ready we want fade-in then fade-out within the phase duration
@@ -129,14 +157,14 @@ export const Centering = () => {
               className="action-button primary"
               onClick={startBreathing}
             >
-              I'd like to center myself
+              {tx.center}
             </button>
 
             <button
               className="action-button secondary"
               onClick={() => setState('selection')}
             >
-              I'm already centered
+              {tx.alreadyCentered}
             </button>
           </div>
         )}
@@ -145,20 +173,20 @@ export const Centering = () => {
           <div className="breath-guidance fade-in">
             <div className="breath-display">
               <div className="breath-instruction-large">
-                {breathPhase === 'in' ? 'In' : 'Out'}
+                {breathPhase === 'in' ? tx.breathIn : tx.breathOut}
               </div>
               <div className="breath-countdown">
                 {countdown}
               </div>
             </div>
             <p className="breath-cycle-info">
-              Breath {breathCount + 1} of 3
+              {tx.breathOf(breathCount + 1)}
             </p>
             <button
               className="action-button secondary small"
               onClick={skipCentering}
             >
-              Skip to cards
+              {tx.skip}
             </button>
           </div>
         )}
@@ -266,7 +294,7 @@ export const Centering = () => {
           padding: 0.85rem 1.8rem;
           border: none;
           border-radius: 30px;
-          font-size: clamp(0.85rem, 2vw, 1rem);
+          font-size: clamp(1.02rem, 2.4vw, 1.2rem);
           font-weight: 500;
           cursor: pointer;
           transition: all 0.3s ease;

@@ -1,5 +1,24 @@
 import { useAppStore } from '../store/useAppStore'
 
+const t = {
+  en: {
+    title: 'Trust Your Intuition',
+    instruction: 'Feel into the cards and choose the one that calls to you',
+    shuffle: 'Shuffle Cards',
+    drawAnother: 'Draw Another',
+    returnHome: 'Return Home',
+    backToWelcome: 'Back to Welcome',
+  },
+  de: {
+    title: 'Vertraue deiner Intuition',
+    instruction: 'Spüre in die Karten hinein und wähle die, die dich anspricht',
+    shuffle: 'Karten mischen',
+    drawAnother: 'Noch eine Karte',
+    returnHome: 'Zur Startseite',
+    backToWelcome: 'Zurück',
+  },
+}
+
 export const CardSelection = () => {
   const {
     setState,
@@ -9,7 +28,9 @@ export const CardSelection = () => {
     setFocusedCardId,
     triggerShuffle,
     reset,
+    language,
   } = useAppStore()
+  const tx = t[language]
 
   const isFocused = !!focusedCardId
   const question = selectedCard?.questions?.[0] ?? null
@@ -30,8 +51,8 @@ export const CardSelection = () => {
 
       {!isFocused && (
         <div className="selection-header">
-          <h2 className="selection-title">Trust Your Intuition</h2>
-          <p className="selection-instruction">Feel into the cards and choose the one that calls to you</p>
+          <h2 className="selection-title">{tx.title}</h2>
+          <p className="selection-instruction">{tx.instruction}</p>
         </div>
       )}
 
@@ -44,13 +65,13 @@ export const CardSelection = () => {
       <div className="selection-actions">
         {!isFocused && (
           <button className="action-button secondary" onClick={() => triggerShuffle?.()}>
-            Shuffle Cards
+            {tx.shuffle}
           </button>
         )}
 
         {isFocused && (
           <button className="action-button secondary" onClick={handleDrawAnother}>
-            Draw Another
+            {tx.drawAnother}
           </button>
         )}
 
@@ -58,7 +79,7 @@ export const CardSelection = () => {
           className="action-button secondary"
           onClick={isFocused ? handleReturnHome : () => setState('welcome')}
         >
-          {isFocused ? 'Return Home' : 'Back to Welcome'}
+          {isFocused ? tx.returnHome : tx.backToWelcome}
         </button>
       </div>
 
@@ -137,7 +158,7 @@ export const CardSelection = () => {
           padding: 0.8rem 1.5rem;
           border: none;
           border-radius: 25px;
-          font-size: clamp(0.8rem, 2vw, 0.9rem);
+          font-size: clamp(0.96rem, 2.4vw, 1.08rem);
           font-weight: 500;
           cursor: pointer;
           transition: all 0.3s ease;

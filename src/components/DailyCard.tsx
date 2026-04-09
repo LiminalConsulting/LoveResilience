@@ -1,8 +1,24 @@
 import { useEffect } from 'react'
 import { useAppStore } from '../store/useAppStore'
 
+const t = {
+  en: {
+    label: 'Your Card for Today',
+    drawCard: 'Draw a Card',
+    returnHome: 'Return Home',
+    locale: 'en-US',
+  },
+  de: {
+    label: 'Deine Karte für heute',
+    drawCard: 'Karte ziehen',
+    returnHome: 'Zur Startseite',
+    locale: 'de-DE',
+  },
+}
+
 export const DailyCard = () => {
-  const { getDailyCard, selectedCard, setState, reset } = useAppStore()
+  const { getDailyCard, selectedCard, setState, reset, language } = useAppStore()
+  const tx = t[language]
 
   useEffect(() => {
     getDailyCard()
@@ -10,7 +26,7 @@ export const DailyCard = () => {
 
   if (!selectedCard) return null
 
-  const currentDate = new Date().toLocaleDateString('en-US', {
+  const currentDate = new Date().toLocaleDateString(tx.locale, {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
@@ -23,7 +39,7 @@ export const DailyCard = () => {
     <div className="daily-container">
 
       <div className="daily-header">
-        <p className="daily-label">Your Card for Today</p>
+        <p className="daily-label">{tx.label}</p>
         <p className="daily-date">{currentDate}</p>
       </div>
 
@@ -35,10 +51,10 @@ export const DailyCard = () => {
 
       <div className="daily-actions">
         <button className="action-button secondary" onClick={() => setState('selection')}>
-          Draw a Card
+          {tx.drawCard}
         </button>
         <button className="action-button secondary" onClick={() => { reset(); setState('welcome') }}>
-          Return Home
+          {tx.returnHome}
         </button>
       </div>
 
@@ -117,7 +133,7 @@ export const DailyCard = () => {
           padding: 0.8rem 1.5rem;
           border: none;
           border-radius: 25px;
-          font-size: clamp(0.8rem, 2vw, 0.9rem);
+          font-size: clamp(0.96rem, 2.4vw, 1.08rem);
           font-weight: 500;
           cursor: pointer;
           transition: all 0.3s ease;

@@ -43,3 +43,5 @@ Deployed to GitHub Pages. Base URL: `/LoveResilience/`
 ```
 
 For full-screen embedding, set the iframe to `height="100vh"` inside a full-width section in the website builder, and add `allow="fullscreen"` if needed.
+
+Github Pages link: https://liminalconsulting.github.io/LoveResilience/

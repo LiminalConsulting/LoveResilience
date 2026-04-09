@@ -1,8 +1,23 @@
 import { useEffect } from 'react'
 import { useAppStore } from '../store/useAppStore'
 
+const t = {
+  en: {
+    tagline: 'A sanctuary for your practical spirituality',
+    cardOfDay: 'Card of the Day',
+    drawCard: 'Draw a Card',
+  },
+  de: {
+    tagline: 'Ein Rückzugsort für deine praktische Spiritualität',
+    cardOfDay: 'Tageskarte',
+    drawCard: 'Karte ziehen',
+  },
+}
+
 export const Welcome = () => {
   const setState = useAppStore(state => state.setState)
+  const language = useAppStore(state => state.language)
+  const tx = t[language]
 
   useEffect(() => {
     if (!localStorage.getItem('loveResilience_userId')) {
@@ -15,15 +30,15 @@ export const Welcome = () => {
 
       <div className="welcome-header">
         <h1 className="welcome-title">Love Resilience</h1>
-        <p className="welcome-tagline">A digital sanctuary for practical spirituality</p>
+        <p className="welcome-tagline">{tx.tagline}</p>
       </div>
 
       <div className="welcome-actions">
         <button className="action-button primary" onClick={() => setState('daily')}>
-          Card of the Day
+          {tx.cardOfDay}
         </button>
         <button className="action-button secondary" onClick={() => setState('centering')}>
-          Draw a Card
+          {tx.drawCard}
         </button>
       </div>
 
@@ -77,7 +92,7 @@ export const Welcome = () => {
           padding: 0.85rem 1.8rem;
           border: none;
           border-radius: 30px;
-          font-size: clamp(0.9rem, 2vw, 1rem);
+          font-size: clamp(1.08rem, 2.4vw, 1.2rem);
           font-weight: 500;
           cursor: pointer;
           transition: all 0.3s ease;
