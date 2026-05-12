@@ -3,6 +3,8 @@
 ## What This Is
 A 3D card deck web app for Tanja's Love Resilience coaching practice. 70 cards focused on practical spirituality and resilience. Deployed to GitHub Pages, embedded as iframe in Tanja's website (built with a visual website builder).
 
+The repo also holds the **`Buechlein/`** folder — a Word template (`.docx`) for the printed companion booklet that ships with the physical card deck. See `Buechlein/README.md` for the print spec (85×125 mm, mirror margins, German hyphenation) and rebuild instructions. Unrelated to the web app's build/deploy.
+
 **Live dev server:** `http://192.168.1.128:5173/LoveResilience/` (local network)
 
 ---

@@ -43,3 +43,9 @@ Deployed automatically to **https://liminalconsulting.github.io/LoveResilience/*
 ```
 
 For full-screen embedding, set the iframe to `height="100vh"` inside a full-width section in the website builder, and add `allow="fullscreen"` if needed.
+
+---
+
+## Companion booklet (Büchlein)
+
+The printed companion booklet that ships with the physical deck has its own Word template in [`Buechlein/`](./Buechlein/). See [`Buechlein/README.md`](./Buechlein/README.md) for the print spec, what's pre-configured, and how to rebuild the template.

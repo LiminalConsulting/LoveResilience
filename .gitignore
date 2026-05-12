@@ -12,6 +12,8 @@ test-results/
 # Client documentation (not needed for website)
 *.docx
 *.pdf
+!Buechlein/**/*.docx
+!Buechlein/**/*.pdf
 CLIENT_DOCUMENT_SPECIFICATIONS.md
 LoveResilience_CardDeck_Complete.md
 
