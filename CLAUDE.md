@@ -130,4 +130,4 @@ breathPhase: 'in' | 'out'
 npm run build    # builds to dist/
 npm run dev -- --host  # dev server accessible on local network
 ```
-GitHub Pages deployment via `gh-pages` package. Base URL: `/LoveResilience/`.
+Hosted at **https://liminalconsulting.github.io/LoveResilience/**. Pushing to `main` triggers `.github/workflows/deploy.yml`, which builds and publishes to GitHub Pages automatically — no manual deploy command needed. Base URL: `/LoveResilience/`.

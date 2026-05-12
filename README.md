@@ -22,19 +22,19 @@ npm run dev -- --host   # dev server, accessible on local network
 npm run build           # production build to dist/
 ```
 
-Deployed to GitHub Pages. Base URL: `/LoveResilience/`
+Deployed automatically to **https://liminalconsulting.github.io/LoveResilience/** by `.github/workflows/deploy.yml` on every push to `main`. Base URL: `/LoveResilience/`
 
 ---
 
 ## Next steps
 
 1. **Add questions** — receive the card question text document (ordered to match the 71 card images), wire it into `src/data/cardLoader.ts`, and display per-card questions in both EN and DE
-2. **Deploy** — run `npm run build` and push to GitHub Pages via the `gh-pages` package
+2. **Deploy** — push to `main`; the GitHub Actions workflow builds and publishes to GitHub Pages automatically
 3. **Embed** — add an iframe to Tanja's website pointing to the deployed URL:
 
 ```html
 <iframe
-  src="https://projectliminality.github.io/LoveResilience/"
+  src="https://liminalconsulting.github.io/LoveResilience/"
   width="100%"
   height="700px"
   frameborder="0"
@@ -43,5 +43,3 @@ Deployed to GitHub Pages. Base URL: `/LoveResilience/`
 ```
 
 For full-screen embedding, set the iframe to `height="100vh"` inside a full-width section in the website builder, and add `allow="fullscreen"` if needed.
-
-Github Pages link: https://liminalconsulting.github.io/LoveResilience/
